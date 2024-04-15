@@ -1,0 +1,8 @@
+{
+  "token": "bot token here",
+  "master_voices": [
+    "your master voice channel id here",
+    "you can add multiple",
+    "all should be strings"
+  ]
+}
