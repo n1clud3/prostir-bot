@@ -15,26 +15,25 @@ client.once(Events.ClientReady, e => {
 });
 
 client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
-  
+  Logger.log("VoiceStateUpdate event fired!");
   if (oldState.channel !== null && oldState.channel.id !== null && channels.includes(oldState.channel.id) && oldState.channel.members.size <= 0) {
-    Logger.log(`Deleting voice channel "${oldState.channel.name}" (${oldState.channel.id})`);
     oldState.channel.delete();
     delete channels[channels.indexOf(oldState.channel.id)];
+    Logger.log(`Deleted voice channel "${oldState.channel.name}" (${oldState.channel.id})`);
   }
 
-  if (newState.channel === null || !channels_data.exists(newState.channelId)) {return};
-  if (newState.member === null || newState.member.nickname === null) {return};
-  Logger.log(`${newState.member.nickname} joined a master voice ${newState.channel.name} (${newState.channelId}).`);
+  if (newState.channel === null || !channels_data.exists(newState.channelId) || newState.member === null) {return};
+  Logger.log(`${newState.member.displayName} joined a master voice ${newState.channel.name} (${newState.channelId}).`);
 
 
   newState.guild.channels.create({
-    "name": newState.member.nickname,
+    "name": newState.member.displayName,
     "parent": newState.channel.parent,
     "type": 2,
     "userLimit": 0,
   }).then((channel) => {
     if (newState.member === null) {return};
-    Logger.log(`Created a new voice channel for ${newState.member.nickname} (${newState.member.id})`);
+    Logger.log(`Created a new voice channel for ${newState.member.displayName} (${newState.member.id})`);
     //@ts-ignore
     newState.member.voice.setChannel(channel);
     channels.push(channel.id);
