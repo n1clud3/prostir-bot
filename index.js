@@ -9,13 +9,11 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBit
 let channels = [];
 
 const channels_data = new Channels(master_voices);
-
 client.once(Events.ClientReady, e => {
-  Logger.log(`Ready! Logged in as ${e.user.tag}`);
+  Logger.log(`Ready! Logged in as "${e.user.tag}"`);
 });
 
 client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
-  Logger.log("VoiceStateUpdate event fired!");
   if (oldState.channel !== null && oldState.channel.id !== null && channels.includes(oldState.channel.id) && oldState.channel.members.size <= 0) {
     oldState.channel.delete();
     delete channels[channels.indexOf(oldState.channel.id)];
@@ -23,8 +21,7 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
   }
 
   if (newState.channel === null || !channels_data.exists(newState.channelId) || newState.member === null) {return};
-  Logger.log(`${newState.member.displayName} joined a master voice ${newState.channel.name} (${newState.channelId}).`);
-
+  Logger.log(`${newState.member.displayName} joined a master voice "${newState.channel.name}" (${newState.channelId}).`);
 
   newState.guild.channels.create({
     "name": newState.member.displayName,
