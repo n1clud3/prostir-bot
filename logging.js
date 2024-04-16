@@ -5,6 +5,16 @@ module.exports = class Logger {
    */
   static log(msg) {
     const timestamp = new Date();
-    console.log(`[UTC${timestamp.getUTCHours()}:${timestamp.getUTCMinutes()}:${timestamp.getUTCSeconds()}] ${msg}`);
+    console.log(`[INFO][UTC${timestamp.getUTCHours()}:${timestamp.getUTCMinutes()}:${timestamp.getUTCSeconds()}] ${msg}`);
+  }
+
+  static warn(msg) {
+    const timestamp = new Date();
+    console.warn(`[WARN][UTC${timestamp.getUTCHours()}:${timestamp.getUTCMinutes()}:${timestamp.getUTCSeconds()}] ${msg}`);
+  }
+
+  static error(msg) {
+    const timestamp = new Date();
+    console.error(`[ERROR][UTC${timestamp.getUTCHours()}:${timestamp.getUTCMinutes()}:${timestamp.getUTCSeconds()}] ${msg}`);
   }
 }
