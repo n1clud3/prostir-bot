@@ -1,5 +1,5 @@
 //@ts-check
-const { Client, Events, GatewayIntentBits } = require("discord.js");
+const { Client, Events, GatewayIntentBits, PermissionsBitField } = require("discord.js");
 const { token, master_voices } = require("./config.json");
 const Channels = require("./data");
 const Logger = require("./logging");
@@ -28,6 +28,12 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
     "parent": newState.channel.parent,
     "type": 2,
     "userLimit": 0,
+    "permissionOverwrites": [
+      {
+        "id": newState.member.id,
+        "allow": [PermissionsBitField.Flags.ManageChannels],
+      }
+    ],
   }).then((channel) => {
     if (newState.member === null) {return};
     Logger.log(`Created a new voice channel for ${newState.member.displayName} (${newState.member.id})`);
