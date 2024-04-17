@@ -1,6 +1,6 @@
 //@ts-check
 const { Client, Events, GatewayIntentBits, PermissionsBitField, ChannelType } = require("discord.js");
-const { token, master_voices } = require("./config.json");
+const config = require("./config.json");
 const Channels = require("./data");
 const Logger = require("./logging");
 
@@ -8,7 +8,7 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBit
 
 let channels = [];
 
-const channels_data = new Channels(master_voices);
+const channels_data = new Channels(config.master_voices);
 client.once(Events.ClientReady, e => {
   Logger.log(`Ready! Logged in as "${e.user.tag}"`);
 });
@@ -63,4 +63,4 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
   })
 });
 
-client.login(token);
+client.login(config.token);
