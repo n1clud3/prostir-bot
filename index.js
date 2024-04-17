@@ -20,23 +20,43 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
     Logger.log(`Deleted voice channel "${oldState.channel.name}" (${oldState.channel.id})`);
   }
 
-  if (newState.channel === null || !channels_data.exists(newState.channelId) || newState.member === null) {return};
-  Logger.log(`${newState.member.displayName} joined a master voice "${newState.channel.name}" (${newState.channelId}).`);
+  
+  if (newState.channel === null || !channels_data.exists(newState.channelId) || newState.member === null || client.user === null) {return};
+  Logger.log(`${newState.member.displayName} joined a master voice "${newState.channel.name}" (${newState.channelId})`);
+
+  const botUser = newState.guild.roles.botRoleFor(client.user);
+  if (botUser === null) {return};
+  
+  const channelPerms = [
+    {
+      "id": newState.member.id,
+      "allow": [PermissionsBitField.Flags.ManageChannels],
+    },
+    {
+      "id": botUser.id,
+      "allow": [PermissionsBitField.Flags.ViewChannel],
+    },
+    {
+      "id": newState.guild.roles.everyone,
+      "deny": [PermissionsBitField.Flags.ViewChannel],
+      
+    }
+  ];
+  const categoryVisible = newState.channel.parent?.permissionsFor(newState.guild.roles.everyone).toArray().includes("ViewChannel");
+
+  if (categoryVisible) {
+    channelPerms.pop();
+  }
 
   newState.guild.channels.create({
     "name": newState.member.displayName,
     "parent": newState.channel.parent,
     "type": ChannelType.GuildVoice,
     "userLimit": 0,
-    "permissionOverwrites": [
-      {
-        "id": newState.member.id,
-        "allow": [PermissionsBitField.Flags.ManageChannels],
-      }
-    ],
+    "permissionOverwrites": channelPerms,
   }).then((channel) => {
     if (newState.member === null) {return};
-    Logger.log(`Created a new voice channel for ${newState.member.displayName} (${newState.member.id})`);
+    Logger.log(`Moved ${newState.member.displayName} (${newState.member.id}) to a new voice channel`);
     //@ts-ignore
     newState.member.voice.setChannel(channel);
     channels.push(channel.id);
