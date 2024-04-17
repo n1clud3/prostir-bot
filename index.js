@@ -1,14 +1,12 @@
 //@ts-check
 const { Client, Events, GatewayIntentBits, PermissionsBitField, ChannelType } = require("discord.js");
 const config = require("./config.json");
-const Channels = require("./data");
 const Logger = require("./logging");
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] });
 
 let channels = [];
 
-const channels_data = new Channels(config.master_voices);
 client.once(Events.ClientReady, e => {
   Logger.log(`Ready! Logged in as "${e.user.tag}"`);
 });
@@ -21,7 +19,7 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
   }
 
   
-  if (newState.channel === null || !channels_data.exists(newState.channelId) || newState.member === null || client.user === null) {return};
+  if (newState.channel === null || !config.master_voices.includes(newState.channel.id) || newState.member === null || client.user === null) {return};
   Logger.log(`${newState.member.displayName} joined a master voice "${newState.channel.name}" (${newState.channelId})`);
 
   const botUser = newState.guild.roles.botRoleFor(client.user);
