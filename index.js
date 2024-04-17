@@ -1,5 +1,5 @@
 //@ts-check
-const { Client, Events, GatewayIntentBits, PermissionsBitField } = require("discord.js");
+const { Client, Events, GatewayIntentBits, PermissionsBitField, ChannelType } = require("discord.js");
 const { token, master_voices } = require("./config.json");
 const Channels = require("./data");
 const Logger = require("./logging");
@@ -26,7 +26,7 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
   newState.guild.channels.create({
     "name": newState.member.displayName,
     "parent": newState.channel.parent,
-    "type": 2,
+    "type": ChannelType.GuildVoice,
     "userLimit": 0,
     "permissionOverwrites": [
       {
