@@ -4,13 +4,15 @@
   "description": "Discord bot for managing the Prostir Discord",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "set RUN_TESTS=1 && node ."
   },
   "keywords": [],
   "author": "",
   "license": "",
   "dependencies": {
-    "discord.js": "^14.14.1"
+    "@types/sqlite3": "^3.1.11",
+    "discord.js": "^14.14.1",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "eslint": "^9.0.0"

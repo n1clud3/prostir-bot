@@ -3,7 +3,12 @@ const { Client, Events, GatewayIntentBits, PermissionsBitField, ChannelType } = 
 const config = require("./config.json");
 const logger = require("./logging");
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] });
+const client = new Client({ intents: [
+  GatewayIntentBits.Guilds,
+  GatewayIntentBits.GuildVoiceStates,
+  GatewayIntentBits.GuildMessages,
+  GatewayIntentBits.MessageContent
+]});
 
 client.once(Events.ClientReady, e => {
   logger.log(`Logged in as "${e.user.tag}"`);
