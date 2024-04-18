@@ -17,7 +17,7 @@ function generatePaddedTimestamp(timestamp) {
    */
 function log(...msg) {
   const timestamp = generatePaddedTimestamp(new Date());
-  console.log(`[INFO][UTC${timestamp}]`, ...msg);
+  console.log(`[UTC${timestamp}][INFO]`, ...msg);
 }
 
 /**
@@ -26,7 +26,7 @@ function log(...msg) {
  */
 function warn(...msg) {
   const timestamp = generatePaddedTimestamp(new Date());
-  console.log(`[WARN][UTC${timestamp}]`, ...msg);
+  console.log(`[UTC${timestamp}][WARN]`, ...msg);
 }
 
 /**
@@ -35,7 +35,7 @@ function warn(...msg) {
  */
 function error(...msg) {
   const timestamp = generatePaddedTimestamp(new Date());
-  console.log(`[ERROR][UTC${timestamp}]`, ...msg);
+  console.log(`[UTC${timestamp}][ERROR]`, ...msg);
 }
 
 module.exports = {log, warn, error}
