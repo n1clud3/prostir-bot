@@ -12,6 +12,17 @@ function generatePaddedTimestamp(timestamp) {
 }
 
 /**
+   * Debug message to send to console.
+   * Will be shown only if process.env.DEBUG exists.
+   * @param {...any} msg
+   */
+function debug(...msg) {
+  if (!process.env.DEBUG) { return }
+  const timestamp = generatePaddedTimestamp(new Date());
+  console.log(`[UTC${timestamp}][DEBUG]`, ...msg);
+}
+
+/**
    * Message to send to console
    * @param {...any} msg
    */
