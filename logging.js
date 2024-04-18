@@ -49,4 +49,4 @@ function error(...msg) {
   console.error(`[UTC${timestamp}][ERROR]`, ...msg);
 }
 
-module.exports = {log, warn, error}
+module.exports = {debug, log, warn, error}
