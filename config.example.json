@@ -1,8 +1,12 @@
 {
   "token": "bot token here",
-  "master_voices": [
-    "your master voice channel id here",
-    "you can add multiple",
-    "all should be strings"
-  ]
+  "modules": {
+    "voice_managing": {
+      "enabled": true,
+      "master_voices": [
+        "master channel id here",
+        "you can put multiple"
+      ]
+    }
+  }
 }
