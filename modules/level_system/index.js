@@ -1,9 +1,11 @@
 //@ts-check
 
-const { Events, Client } = require("discord.js");
+const path = require("node:path");
+const fs = require("node:fs");
+const { Events, Client, Collection } = require("discord.js");
 const sqlite3 = require("sqlite3").verbose();
-const logger = require("./../logging");
-const config = require("./../config.json");
+const logger = require("../../logging");
+const config = require("../../config.json");
 
 /**
  * Calculates level from the XP amount.
@@ -20,21 +22,63 @@ function calculateLevel(xp) {
   return Math.ceil(level);
 }
 
-module.exports = function initModule(/**@type {Client}*/ client) {
-  const bot_db = new sqlite3.Database("bot.db");
+function loadCommands(/**@type {Client}*/client) {
+  const commands = new Collection();
 
-  // Basically if levels_data table doesn't exist, create it.
-  // If SQL wouldn't throw error after trying to create existing table, this would be smaller.
-  bot_db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='levels_data'", (err, row) => {
-    if (err) {
-      logger.error("DB Error:", err);
+  const commandsPath = path.join(__dirname, "commands");
+  const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
+  for (const file of commandFiles) {
+    const filePath = path.join(commandsPath, file);
+    const command = require(filePath);
+    if ("data" in command && "execute" in command) {
+      commands.set(command.data.name, command);
+    } else {
+      logger.warn(`The command at ${filePath} is missing a required "data" or "execute" property.`);
+    }
+  }
+
+  return commands;
+}
+
+function handleCommands(/**@type {Client}*/client, /** @type {Collection<String,>} */ commands) {
+  client.on(Events.InteractionCreate, async interaction => {
+    if (!interaction.isChatInputCommand()) return;
+    const command = commands.get(interaction.commandName);
+
+    if (!command) {
+      logger.error(`No command matching ${interaction.commandName} was found.`);
       return;
     }
 
+    try {
+      await command.execute(interaction);
+    } catch (error) {
+      console.error(error);
+      if (interaction.replied || interaction.deferred) {
+        await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
+      } else {
+        await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+      }
+    }
+  });
+  
+  logger.log("Command handlers are set up.");
+}
+
+function initModule(/**@type {Client}*/ client) {
+  // Basically if levels_data table doesn't exist, create it.
+  // If SQL wouldn't throw error after trying to create existing table, this would be smaller.
+  const bot_db = new sqlite3.Database("bot.db");
+  bot_db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='levels_data'", (err, row) => {
+    if (err) {
+      logger.error("DB", err);
+      return;
+    }
+    
     if (!row) {
       bot_db.run("CREATE TABLE levels_data (uid TEXT, xp INTEGER)", (err) => {
         if (err) {
-          logger.error("DB Error:", err);
+          logger.error("DB", err);
         } else {
           logger.log("Level system DB table created successfully.");
         }
@@ -43,11 +87,13 @@ module.exports = function initModule(/**@type {Client}*/ client) {
   });
   bot_db.close();
 
+  handleCommands(client, loadCommands(client));
+
   client.on(Events.MessageCreate, (msg) => {
-    if (msg.author.bot) {return} // No XP for bots
+    if (msg.author.bot) return // No XP for bots
     const db = new sqlite3.Database("bot.db");
     const reward = Math.ceil(msg.content.length * config.modules.level_system.messageLengthXPMultiplier);
-    logger.log(`${msg.author.displayName} was rewarded with ${reward} XP!`);
+    logger.debug(`${msg.author.displayName} was rewarded with ${reward} XP!`);
 
     // databases are a fucking mess.
     db.get("SELECT xp FROM levels_data WHERE uid = (?)", msg.author.id, (err, row) => {
@@ -66,7 +112,7 @@ module.exports = function initModule(/**@type {Client}*/ client) {
         });
       } else {
         db.run(`UPDATE levels_data SET xp = ${row.xp + reward} WHERE uid = '${msg.author.id}'`);
-        logger.log(`Their XP: ${row.xp + reward}. Their LVL: ${calculateLevel(row.xp + reward)}`);
+        logger.debug(`Their XP: ${row.xp + reward}. Their LVL: ${calculateLevel(row.xp + reward)}`);
         
         const old_lvl = calculateLevel(row.xp);
         const new_lvl = calculateLevel(row.xp + reward);
@@ -88,3 +134,5 @@ module.exports = function initModule(/**@type {Client}*/ client) {
 
   logger.log("Level system is set up.");
 }
+
+module.exports = { initModule, calculateLevel }

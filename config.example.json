@@ -1,5 +1,7 @@
 {
   "token": "bot token here",
+  "clientId": "your application id",
+  "guildId": "your guild id",
   "modules": {
     "voice_managing": {
       "enabled": true,
@@ -9,7 +11,7 @@
       ]
     },
     "level_system": {
-      "enabled": false,
+      "enabled": true,
       "messageLengthXPMultiplier": 0.2,
       "nextLevelXPReqMultiplier": 1.3,
       "baseXP": 100
