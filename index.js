@@ -17,7 +17,7 @@ client.once(Events.ClientReady, e => {
     if (!config.modules[mod].enabled) { continue };
     logger.log(`Setting up ${mod}...`);
     try {
-      const initModule = require(`./modules/${mod}`);
+      const { initModule } = require(`./modules/${mod}`);
       initModule(client);
     } catch (error) {
       logger.error(`Catched error when trying to init module ${mod}.`, error);

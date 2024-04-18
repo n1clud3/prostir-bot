@@ -1,13 +1,13 @@
 //@ts-check
 
 const { Client, Events, PermissionsBitField, ChannelType } = require("discord.js");
-const logger = require("./../logging");
-const config = require("./../config.json");
+const logger = require("../../logging");
+const config = require("../../config.json");
 
 /**
  * @param {Client} client
  */
-module.exports = function initModule(client) {
+function initModule(client) {
   const channels = [];
   
   client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
@@ -44,3 +44,5 @@ module.exports = function initModule(client) {
   });
   logger.log("Voice managing module is set up.");
 }
+
+module.exports = { initModule }
