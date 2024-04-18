@@ -40,7 +40,8 @@ function loadCommands(/**@type {Client}*/client) {
   return commands;
 }
 
-function handleCommands(/**@type {Client}*/client, /** @type {Collection<String,>} */ commands) {
+function handleCommands(/**@type {Client}*/client) {
+  const commands = loadCommands();
   client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isChatInputCommand()) return;
     const command = commands.get(interaction.commandName);
@@ -86,8 +87,6 @@ function initModule(/**@type {Client}*/ client) {
     }
   });
   bot_db.close();
-
-  handleCommands(client, loadCommands(client));
 
   client.on(Events.MessageCreate, (msg) => {
     if (msg.author.bot) return // No XP for bots
@@ -135,4 +134,4 @@ function initModule(/**@type {Client}*/ client) {
   logger.log("Level system is set up.");
 }
 
-module.exports = { initModule, calculateLevel }
+module.exports = { initModule, calculateLevel, handleCommands }

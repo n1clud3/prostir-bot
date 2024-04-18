@@ -14,10 +14,11 @@ client.once(Events.ClientReady, e => {
   logger.log(`Logged in as "${e.user.tag}"`);
 
   for (const mod in config.modules) {
-    if (!config.modules[mod].enabled) { continue };
     logger.log(`Setting up ${mod}...`);
     try {
-      const { initModule } = require(`./modules/${mod}`);
+      const { initModule, handleCommands } = require(`./modules/${mod}`);
+      if (handleCommands) handleCommands(client);
+      if (!config.modules[mod].enabled) continue;
       initModule(client);
     } catch (error) {
       logger.error(`Catched error when trying to init module ${mod}.`, error);
