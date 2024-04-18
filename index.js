@@ -1,26 +1,26 @@
 //@ts-check
 const { Client, Events, GatewayIntentBits, PermissionsBitField, ChannelType } = require("discord.js");
 const config = require("./config.json");
-const Logger = require("./logging");
+const logger = require("./logging");
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] });
 
 let channels = [];
 
 client.once(Events.ClientReady, e => {
-  Logger.log(`Ready! Logged in as "${e.user.tag}"`);
+  logger.log(`Ready! Logged in as "${e.user.tag}"`);
 });
 
 client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
   if (oldState.channel !== null && oldState.channel.id !== null && channels.includes(oldState.channel.id) && oldState.channel.members.size <= 0) {
     oldState.channel.delete();
     delete channels[channels.indexOf(oldState.channel.id)];
-    Logger.log(`Deleted voice channel "${oldState.channel.name}" (${oldState.channel.id})`);
+    logger.log(`Deleted voice channel "${oldState.channel.name}" (${oldState.channel.id})`);
   }
 
   
   if (newState.channel === null || !config.master_voices.includes(newState.channel.id) || newState.member === null || client.user === null) {return};
-  Logger.log(`${newState.member.displayName} joined a master voice "${newState.channel.name}" (${newState.channelId})`);
+  logger.log(`${newState.member.displayName} joined a master voice "${newState.channel.name}" (${newState.channelId})`);
 
   const botUser = newState.guild.roles.botRoleFor(client.user);
   if (botUser === null) {return};
@@ -54,7 +54,7 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
     "permissionOverwrites": channelPerms,
   }).then((channel) => {
     if (newState.member === null) {return};
-    Logger.log(`Moved ${newState.member.displayName} (${newState.member.id}) to a new voice channel`);
+    logger.log(`Moved ${newState.member.displayName} (${newState.member.id}) to a new voice channel`);
     //@ts-ignore
     newState.member.voice.setChannel(channel);
     channels.push(channel.id);
