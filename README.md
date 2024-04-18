@@ -9,7 +9,8 @@ Follow these steps in order to setup your bot.
 1. Clone repo;
 2. Create a `config.json`;
 3. Fill in the config by following the [example](./config.example.json);
-4. Start the bot by running the `node .` command.
+4. Run `npm run deploycmds` to register commands on your server;
+5. Start the bot by running the `node .` command.
 
 ### Required permissions and intents
 
