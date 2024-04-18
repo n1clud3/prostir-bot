@@ -4,7 +4,8 @@
   "description": "Discord bot for managing the Prostir Discord",
   "main": "index.js",
   "scripts": {
-    "test": "set RUN_TESTS=1 && node ."
+    "test": "set RUN_TESTS=1 && node .",
+    "deploycmds": "node deploy-commands.js"
   },
   "keywords": [],
   "author": "",
