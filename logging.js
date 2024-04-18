@@ -26,7 +26,7 @@ function log(...msg) {
  */
 function warn(...msg) {
   const timestamp = generatePaddedTimestamp(new Date());
-  console.log(`[UTC${timestamp}][WARN]`, ...msg);
+  console.warn(`[UTC${timestamp}][WARN]`, ...msg);
 }
 
 /**
@@ -35,7 +35,7 @@ function warn(...msg) {
  */
 function error(...msg) {
   const timestamp = generatePaddedTimestamp(new Date());
-  console.log(`[UTC${timestamp}][ERROR]`, ...msg);
+  console.error(`[UTC${timestamp}][ERROR]`, ...msg);
 }
 
 module.exports = {log, warn, error}
