@@ -1,5 +1,5 @@
 //@ts-check
-const { Client, Events, GatewayIntentBits, PermissionsBitField, ChannelType } = require("discord.js");
+const { Client, Events, GatewayIntentBits } = require("discord.js");
 const config = require("./config.json");
 const logger = require("./logging");
 
