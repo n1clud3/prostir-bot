@@ -22,6 +22,9 @@ function calculateLevel(xp) {
 
 module.exports = function initModule(/**@type {Client}*/ client) {
   const bot_db = new sqlite3.Database("bot.db");
+
+  // Basically if levels_data table doesn't exist, create it.
+  // If SQL wouldn't throw error after trying to create existing table, this would be smaller.
   bot_db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='levels_data'", (err, row) => {
     if (err) {
       logger.error("DB Error:", err);
@@ -41,7 +44,7 @@ module.exports = function initModule(/**@type {Client}*/ client) {
   bot_db.close();
 
   client.on(Events.MessageCreate, (msg) => {
-    if (msg.author.bot) {return}
+    if (msg.author.bot) {return} // No XP for bots
     const db = new sqlite3.Database("bot.db");
     const reward = Math.ceil(msg.content.length * config.modules.level_system.messageLengthXPMultiplier);
     logger.log(`${msg.author.displayName} was rewarded with ${reward} XP!`);
