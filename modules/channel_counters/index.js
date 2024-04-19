@@ -67,7 +67,7 @@ function initModule(/** @type {Client} */client) {
 
   if (counters.online.enabled) {
     setupOnlineCounter(guild, counters.online);
-    setInterval(() => setupMemberCounter(guild, counters.member), config.modules.channel_counters.updateInterval)
+    setInterval(() => setupOnlineCounter(guild, counters.online), config.modules.channel_counters.updateInterval)
     logger.log("Online counter is set up.");
   };
 
