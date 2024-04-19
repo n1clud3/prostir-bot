@@ -1,6 +1,6 @@
 //@ts-check
 
-const { SlashCommandBuilder, SlashCommandUserOption } = require("discord.js");
+const { SlashCommandBuilder } = require("discord.js");
 const sqlite3 = require("sqlite3").verbose();
 const logger = require("./../../../logging");
 const config = require("./../../../config.json");
@@ -9,11 +9,11 @@ const { calculateLevel } = require("./../.");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("xp")
-    .setDescription("Get the XP amount."),
+    .setDescription("Дізнайтеся вашу кількість очок досвіду."),
   async execute(/** @type {import("discord.js").Interaction<import("discord.js").CacheType>}*/interaction) {
     if (!config.modules.level_system.enabled) {
       //@ts-ignore
-      interaction.reply("XP модуль наразі вимкнений.");
+      interaction.reply(":stop_sign: XP модуль наразі вимкнений.");
       return;
     };
     
@@ -21,6 +21,8 @@ module.exports = {
     bot_db.get("SELECT xp FROM levels_data WHERE uid = (?)", interaction.user.id, async (err, row) => {
       if (err) {
         logger.error("DB", err);
+        //@ts-ignore
+        await interaction.reply(":stop_sign: Виникла проблема при виконанні команди.");
         return;
       }
 
