@@ -55,7 +55,7 @@ module.exports = {
       let i = 1;
       
       for (const uid in sortObjectByValue(leaderboard)) {
-        if (i >= 10) break;
+        if (i > 10) break;
         const username = (await interaction.client.users.fetch(uid)).username;
         //message.push({name: username, value: leaderboard[uid].toString(), inline: true})
         message = message.concat(`\n\`${i}. ${username} - ${leaderboard[uid].toString()} XP - LVL ${calculateLevel(leaderboard[uid]).toString()}\``);
