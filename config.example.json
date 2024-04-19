@@ -31,6 +31,20 @@
           "role_id": "id of role you will give to user"
         }
       ]
+    },
+    "channel_counters": {
+      "enabled": true,
+      "updateInterval": 5000,
+      "counters": {
+        "member": {
+          "enabled": true,
+          "channelId": "1230881318213124197"
+        },
+        "online": {
+          "enabled": true,
+          "channelId": "1230892572285599776"
+        }
+      }
     }
   }
 }
