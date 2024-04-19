@@ -24,13 +24,15 @@ module.exports = {
         return;
       }
 
-      if (!row) {
-        //@ts-ignore
-        await interaction.reply("Ваша кількість XP: `0`. Ваш рівень: `1`.");
-      } else {
-        //@ts-ignore
-        await interaction.reply(`Ваша кількість XP: \`${row.xp}\`. Ваш рівень: \`${calculateLevel(row.xp)}\``);
+      let xp = 0;
+      let lvl = 0;
+
+      if (row) {
+        xp = row.xp;
+        lvl = calculateLevel(row.xp);
       }
+      //@ts-ignore
+      await interaction.reply(`:star: Ваша кількість XP: \`${xp}\`\n:chart_with_upwards_trend: Ваш рівень: \`${lvl}\``);
     });
     bot_db.close();
   }
