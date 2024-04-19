@@ -2,7 +2,7 @@
 
 const path = require("node:path");
 const fs = require("node:fs");
-const { Events, Client, Collection } = require("discord.js");
+const { Events, Client, Collection, Message } = require("discord.js");
 const sqlite3 = require("sqlite3").verbose();
 const logger = require("../../logging");
 const config = require("../../config.json");
@@ -20,6 +20,31 @@ function calculateLevel(xp) {
       xpRequired *= config.modules.level_system.nextLevelXPReqMultiplier; // Increase XP required for next level by X times
   }
   return Math.ceil(level);
+}
+
+/**
+ * @param {number} level
+ * @param {Message<boolean>} msg
+ * @returns boolean
+ */
+function checkForReward(level, msg) {
+  const rewards = config.modules.level_system.rewards;
+  for (const reward of rewards) {
+    if (level >= reward.level) {
+      if (reward.type === "grant_role") {
+        if (msg.member === null) {
+          logger.error("Member is null.");
+          return false;
+        }
+        if (msg.member.roles.cache.has(reward.role_id)) return false;
+        msg.member.roles.add(reward.role_id);
+        logger.log(`${msg.author.username} got a ${reward.type} reward!`);
+        return true;
+      }
+    }
+  }
+
+  return false;
 }
 
 function loadCommands(/**@type {Client}*/client) {
@@ -54,7 +79,7 @@ function handleCommands(/**@type {Client}*/client) {
     try {
       await command.execute(interaction);
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       if (interaction.replied || interaction.deferred) {
         await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
       } else {
@@ -91,7 +116,7 @@ function initModule(/**@type {Client}*/ client) {
   client.on(Events.MessageCreate, (msg) => {
     if (msg.author.bot) return // No XP for bots
     if (msg.content.includes("https://") || msg.content.includes("http://")) return; // No XP for links
-    if (config.modules.level_system.ingoredChannels.includes(msg.channel.id)) return;
+    if (config.modules.level_system.ignoredChannels.includes(msg.channel.id)) return;
 
     const reward = Math.round(msg.content.length * config.modules.level_system.messageLengthXPMultiplier);
     logger.debug(`${msg.author.displayName} was rewarded with ${reward} XP!`);
@@ -118,8 +143,15 @@ function initModule(/**@type {Client}*/ client) {
         
         const old_lvl = calculateLevel(row.xp);
         const new_lvl = calculateLevel(row.xp + reward);
+        const grantedReward = checkForReward(new_lvl, msg);
         if (old_lvl < new_lvl) {
-          msg.reply(`:fire: LVL UP! Ви досягли ${new_lvl} рівня :sunglasses:`);
+          let response = `:fire: LVL UP! Ви досягли ${new_lvl} рівня :sunglasses:`;
+          if (grantedReward) {
+            response = response.concat(`\n:military_medal: Вам було видано роль за ваш досягнутий рівень. :saluting_face:`);
+          }
+          msg.reply(response);
+        } else if (grantedReward) {
+          msg.reply(`:military_medal: Вам було видано роль за ваш досягнутий рівень. :saluting_face:`)
         }
       }
     });
