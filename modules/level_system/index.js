@@ -90,6 +90,8 @@ function initModule(/**@type {Client}*/ client) {
 
   client.on(Events.MessageCreate, (msg) => {
     if (msg.author.bot) return // No XP for bots
+    if (msg.content.includes("https://") || msg.content.includes("http://")) return; // No XP for links
+
     const db = new sqlite3.Database("bot.db");
     const reward = Math.ceil(msg.content.length * config.modules.level_system.messageLengthXPMultiplier);
     logger.debug(`${msg.author.displayName} was rewarded with ${reward} XP!`);
