@@ -7,7 +7,7 @@ const config = require("../../config.json");
 /**
  * @param {Client} client
  */
-function initModule(client) {
+async function initModule(client) {
   const channels = [];
   
   client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
