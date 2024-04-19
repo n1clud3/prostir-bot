@@ -11,11 +11,11 @@
   "author": "",
   "license": "",
   "dependencies": {
-    "@types/sqlite3": "^3.1.11",
     "discord.js": "^14.14.1",
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
+    "@types/sqlite3": "^3.1.11",
     "eslint": "^9.0.0"
   }
 }
