@@ -96,7 +96,7 @@ const messageCreate = (/** @type {Message<boolean>} */msg) => {
   if (msg.content.includes("https://") || msg.content.includes("http://")) return; // No XP for links
   if (config.modules.level_system.ignoredChannels.includes(msg.channel.id)) return;
 
-  const reward = Math.round(msg.content.length * config.modules.level_system.messageLengthXPMultiplier);
+  const reward = Math.round(config.modules.level_system.messageBaseReward + msg.content.length * config.modules.level_system.messageLengthXPBonusMultiplier);
   logger.debug(`${msg.author.displayName} was rewarded with ${reward} XP!`);
   
   // databases are a fucking mess.
