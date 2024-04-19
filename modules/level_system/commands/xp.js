@@ -1,6 +1,6 @@
 //@ts-check
 
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const sqlite3 = require("sqlite3").verbose();
 const logger = require("./../../../logging");
 const config = require("./../../../config.json");
@@ -13,7 +13,12 @@ module.exports = {
   async execute(/** @type {import("discord.js").Interaction<import("discord.js").CacheType>}*/interaction) {
     if (!config.modules.level_system.enabled) {
       //@ts-ignore
-      interaction.reply(":stop_sign: XP модуль наразі вимкнений.");
+      await interaction.reply({embeds: [
+        new EmbedBuilder()
+          .setColor("Red")
+          .setTitle("Помилка")
+          .setDescription("XP модуль наразі вимкнений :stop_sign:")
+      ]});
       return;
     };
     
@@ -22,7 +27,12 @@ module.exports = {
       if (err) {
         logger.error("DB", err);
         //@ts-ignore
-        await interaction.reply(":stop_sign: Виникла проблема при виконанні команди.");
+        await interaction.reply({embeds: [
+          new EmbedBuilder()
+            .setColor("Red")
+            .setTitle("Помилка")
+            .setDescription("Виникла проблема при виконанні команди :stop_sign:")
+        ]});
         return;
       }
 
@@ -34,7 +44,23 @@ module.exports = {
         lvl = calculateLevel(row.xp);
       }
       //@ts-ignore
-      await interaction.reply(`:star: Ваша кількість XP: \`${xp}\`\n:chart_with_upwards_trend: Ваш рівень: \`${lvl}\``);
+      await interaction.reply({embeds: [
+        new EmbedBuilder()
+          .setColor(0xd4c47c)
+          .setTitle("Інформація")
+          .addFields(
+            {
+              "name": "Кількість XP :star:",
+              "value": `\`\`\`${xp}\`\`\``,
+              "inline": true,
+            },
+            {
+              "name": "Ваш рівень :chart_with_upwards_trend:",
+              "value": `\`\`\`${lvl}\`\`\``,
+              "inline": true,
+            }
+          )
+      ]});
     });
     bot_db.close();
   }
