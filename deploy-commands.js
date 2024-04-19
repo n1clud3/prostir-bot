@@ -24,7 +24,7 @@ for (const folder of modulesFolders) {
       if ('data' in command && 'execute' in command) {
         commands.push(command.data.toJSON());
       } else {
-        console.log(`The command at ${filePath} is missing a required "data" or "execute" property.`);
+        logger.warn(`The command at ${filePath} is missing a required "data" or "execute" property.`);
       }
     }
   } catch (error) {
@@ -32,7 +32,7 @@ for (const folder of modulesFolders) {
       logger.warn("Skipped", error.path);
       continue;
     } else {
-      logger.log(error);
+      logger.error(error);
     }
   }
 }
@@ -52,9 +52,9 @@ const rest = new REST().setToken(config.token);
 		);
 
     //@ts-ignore
-		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+		logger.log(`Successfully reloaded ${data.length} application (/) commands.`);
 	} catch (error) {
 		// And of course, make sure you catch and log any errors!
-		console.error(error);
+		logger.error(error);
 	}
 })();
