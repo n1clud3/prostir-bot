@@ -4,7 +4,6 @@ const sqlite3 = require("sqlite3").verbose();
 const config = require("./../../../config.json");
 const logger = require("./../../../logging");
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const { execute } = require("./xp");
 const { calculateLevel } = require("..");
 
 function sortObjectByValue(obj) {
@@ -57,7 +56,6 @@ module.exports = {
       for (const uid in sortObjectByValue(leaderboard)) {
         if (i > 10) break;
         const username = (await interaction.client.users.fetch(uid)).username;
-        //message.push({name: username, value: leaderboard[uid].toString(), inline: true})
         message = message.concat(`\n${i}. ${username} - ${leaderboard[uid].toString()} XP - LVL ${calculateLevel(leaderboard[uid]).toString()}`);
         i++;
       }
