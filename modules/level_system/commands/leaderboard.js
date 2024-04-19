@@ -50,7 +50,7 @@ module.exports = {
         leaderboard[rows[row].uid] = rows[row].xp;
       }
 
-      let message = "## :bar_chart: Дошка лідерів\n";
+      let message = "## :bar_chart: Дошка лідерів\n```";
 
       let i = 1;
       
@@ -58,9 +58,10 @@ module.exports = {
         if (i > 10) break;
         const username = (await interaction.client.users.fetch(uid)).username;
         //message.push({name: username, value: leaderboard[uid].toString(), inline: true})
-        message = message.concat(`\n\`${i}. ${username} - ${leaderboard[uid].toString()} XP - LVL ${calculateLevel(leaderboard[uid]).toString()}\``);
+        message = message.concat(`\n${i}. ${username} - ${leaderboard[uid].toString()} XP - LVL ${calculateLevel(leaderboard[uid]).toString()}`);
         i++;
       }
+      message = message.concat("\n```");
       //@ts-ignore
       await interaction.reply(message);
     })
