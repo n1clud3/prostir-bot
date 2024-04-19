@@ -94,7 +94,7 @@ function initModule(/**@type {Client}*/ client) {
     if (config.modules.level_system.ingoredChannels.includes(msg.channel.id)) return;
 
     const db = new sqlite3.Database("bot.db");
-    const reward = Math.ceil(msg.content.length * config.modules.level_system.messageLengthXPMultiplier);
+    const reward = Math.round(msg.content.length * config.modules.level_system.messageLengthXPMultiplier);
     logger.debug(`${msg.author.displayName} was rewarded with ${reward} XP!`);
 
     // databases are a fucking mess.
