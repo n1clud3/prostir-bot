@@ -8,6 +8,7 @@ const client = new Client({ intents: [
   GatewayIntentBits.GuildVoiceStates,
   GatewayIntentBits.GuildMessages,
   GatewayIntentBits.MessageContent,
+  GatewayIntentBits.GuildMembers,
 ]});
 
 client.once(Events.ClientReady, e => {
