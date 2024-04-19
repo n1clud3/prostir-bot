@@ -12,10 +12,10 @@ function generatePaddedTimestamp(timestamp) {
 }
 
 /**
-   * Debug message to send to console.
-   * Will be shown only if process.env.DEBUG exists.
-   * @param {...any} msg
-   */
+ * Debug message to send to console.
+ * Will be shown only if process.env.DEBUG exists.
+ * @param {...any} msg
+ */
 function debug(...msg) {
   if (!process.env.DEBUG) return;
   const timestamp = generatePaddedTimestamp(new Date());
@@ -23,12 +23,21 @@ function debug(...msg) {
 }
 
 /**
-   * Message to send to console
-   * @param {...any} msg
-   */
+ * Message to send to console
+ * @param {...any} msg
+ */
 function log(...msg) {
   const timestamp = generatePaddedTimestamp(new Date());
-  console.log(`[UTC${timestamp}][INFO]`, ...msg);
+  console.log(`[UTC${timestamp}][LOG]`, ...msg);
+}
+
+/**
+ * Message to send to console
+ * @param {...any} msg
+ */
+function info(...msg) {
+  const timestamp = generatePaddedTimestamp(new Date());
+  console.info(`[UTC${timestamp}][LOG]`, ...msg);
 }
 
 /**
@@ -49,4 +58,4 @@ function error(...msg) {
   console.error(`[UTC${timestamp}][ERROR]`, ...msg);
 }
 
-module.exports = {debug, log, warn, error}
+module.exports = {debug, log, info, warn, error}
