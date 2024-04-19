@@ -93,11 +93,11 @@ function initModule(/**@type {Client}*/ client) {
     if (msg.content.includes("https://") || msg.content.includes("http://")) return; // No XP for links
     if (config.modules.level_system.ingoredChannels.includes(msg.channel.id)) return;
 
-    const db = new sqlite3.Database("bot.db");
     const reward = Math.round(msg.content.length * config.modules.level_system.messageLengthXPMultiplier);
     logger.debug(`${msg.author.displayName} was rewarded with ${reward} XP!`);
-
+    
     // databases are a fucking mess.
+    const db = new sqlite3.Database("bot.db");
     db.get("SELECT xp FROM levels_data WHERE uid = (?)", msg.author.id, (err, row) => {
       if (err) {
         logger.error("DB", err);
