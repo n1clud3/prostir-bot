@@ -14,7 +14,11 @@
       "enabled": true,
       "messageLengthXPMultiplier": 0.2,
       "nextLevelXPReqMultiplier": 1.3,
-      "baseXP": 100
+      "baseXP": 100,
+      "ingoredChannels": [
+        "ingored channel id here",
+        "you can put multiple"
+      ]
     }
   }
 }
