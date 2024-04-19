@@ -15,6 +15,10 @@
       "messageLengthXPMultiplier": 0.2,
       "nextLevelXPReqMultiplier": 1.3,
       "baseXP": 100,
+      "voiceXP": {
+        "reward": 2,
+        "interval": 5000
+      },
       "ignoredChannels": [
         "ingored channel id here",
         "you can put multiple"
