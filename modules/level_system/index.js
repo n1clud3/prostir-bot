@@ -19,7 +19,7 @@ function calculateLevel(xp) {
       level++;
       xpRequired *= config.modules.level_system.nextLevelXPReqMultiplier; // Increase XP required for next level by X times
   }
-  return Math.ceil(level);
+  return level;
 }
 
 /**
@@ -37,7 +37,10 @@ function checkForReward(level, msg) {
           return false;
         }
         if (msg.member.roles.cache.has(reward.role_id)) return false;
-        msg.member.roles.add(reward.role_id);
+        msg.member.roles.add(reward.role_id).catch((reason) => {
+          logger.error("Could not add role to a user. Reason:", reason);
+          return;
+        });
         logger.log(`${msg.author.username} got a ${reward.type} reward!`);
         return true;
       }
