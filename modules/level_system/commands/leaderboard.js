@@ -39,7 +39,6 @@ module.exports = {
       if (err) {
         logger.error("DB", err);
         //@ts-ignore
-        // await interaction.reply(":stop_sign: Виникла проблема при виконанні команди.");
         await interaction.reply({embeds: [
           new EmbedBuilder()
             .setColor("Red")
@@ -51,12 +50,10 @@ module.exports = {
 
       if (!rows) {
         //@ts-ignore
-        // await interaction.reply(":warning: Таблиця лідерів пуста.");
         await interaction.reply({embeds: [
           new EmbedBuilder()
             .setColor("Yellow")
-            .setTitle("Увага")
-            .setDescription("Виникла проблема при виконанні команди. :warning:")
+            .setDescription("Таблиця лідерів наразі пуста.")
         ]});
         return;
       }
@@ -78,7 +75,6 @@ module.exports = {
       }
       message = message.concat("\n```");
       //@ts-ignore
-      // await interaction.reply(message);
       await interaction.reply({embeds: [
         new EmbedBuilder()
           .setColor(0xd4c47c)
