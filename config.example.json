@@ -15,8 +15,7 @@
       "nextLevelXPReqMultiplier": 2.0,
       "voiceXP": {
         "reward": 2,
-        "interval": 5000,
-        "groupFarmingMultiplier": 0.7
+        "interval": 5000
       },
       "ignoredChannels": ["ingored channel id here", "you can put multiple"],
       "rewards": [
