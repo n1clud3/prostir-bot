@@ -182,27 +182,6 @@ const voiceStateUpdate = async (oldState, newState) => {
   logger.debug(voice_xp_farmers);
 };
 
-const voiceXPFarmingCallback = () => {
-  const df = data_manager.readDatafile("level_system");
-  if (!df) return;
-  for (const uid of voice_xp_farmers) {
-    logger.debug("Giving voice farmer reward to", uid);
-
-    if (!df[uid]) {
-      df[uid] = {};
-      df[uid].xp = config.modules.level_system.voiceXP.reward;
-      if (data_manager.writeDatafile("level_system", df) === null) {
-        logger.error("Failed to write to datafile");
-      }
-    } else {
-      df[uid].xp += config.modules.level_system.voiceXP.reward;
-      if (data_manager.writeDatafile("level_system", df) === null) {
-        logger.error("Failed to write to datafile");
-      }
-    }
-  }
-};
-
 function initModule(/**@type {Client}*/ client) {
   const df = data_manager.createDatafile("level_system", {});
   if (!df) {
@@ -211,7 +190,40 @@ function initModule(/**@type {Client}*/ client) {
 
   client.on(Events.MessageCreate, messageCreate);
   client.on(Events.VoiceStateUpdate, voiceStateUpdate);
-  setInterval(voiceXPFarmingCallback, config.modules.level_system.voiceXP.interval);
+  setInterval(async () => {
+    const df = data_manager.readDatafile("level_system");
+    if (!df) return;
+    for (const uid of voice_xp_farmers) {
+      logger.debug("Giving voice farmer reward to", uid);
+
+      const guild = client.guilds.cache.get(config.guildId);
+      if (!guild) return;
+
+      const member = guild.members.cache.get(uid);
+      if (!member) return;
+      const chanId = member.voice.channelId;
+      if (!chanId) return;
+      const chan = await guild.channels.fetch(chanId, { force: true });
+      if (!chan) return;
+      //@ts-ignore
+      const memberCount = chan.members?.size;
+
+      let reward = Math.round(config.modules.level_system.voiceXP.reward * memberCount * config.modules.level_system.voiceXP.groupFarmingMultiplier);
+  
+      if (!df[uid]) {
+        df[uid] = {};
+        df[uid].xp = reward;
+        if (data_manager.writeDatafile("level_system", df) === null) {
+          logger.error("Failed to write to datafile");
+        }
+      } else {
+        df[uid].xp += reward;
+        if (data_manager.writeDatafile("level_system", df) === null) {
+          logger.error("Failed to write to datafile");
+        }
+      }
+    }
+  }, config.modules.level_system.voiceXP.interval);
 
   logger.log("Level system is set up.");
 }
