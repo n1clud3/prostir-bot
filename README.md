@@ -13,10 +13,12 @@ Follow these steps in order to setup your bot.
 
 ### Required permissions and intents
 
-The bot requires the Message Content Intent to be enabled.
-It is used by `level_system` module to measure message length.
-It needs to be enabled, whether that module will be used or not,
-unless you edit the [index.js](./index.js) main file.
+The bot requires all Intents to be enabled.
+They are used by `level_system` module to measure message length
+and by `channel_counters` to check guild's member count and
+member's presence status. They need to be enabled, whether
+those modules will be used or not, unless you edit the
+[main](./index.js) file.
 
 The bot needs following permissions to be enabled:
 
