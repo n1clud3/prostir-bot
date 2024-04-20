@@ -14,7 +14,7 @@ async function initModule(/** @type {Client} */client) {
 
   if (counters.member.enabled) {
     const updateMemberCounter = require("./counters/member");
-    await updateMemberCounter(guild, config.modules.channel_counters.counters.member);
+    await updateMemberCounter(guild, counters.member);
     setInterval(async () => await updateMemberCounter(guild, counters.member), config.modules.channel_counters.updateInterval);
     logger.log("Member counter is set up.");
   };
