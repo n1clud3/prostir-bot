@@ -1,11 +1,6 @@
 //@ts-check
 
-const {
-  Client,
-  Events,
-  PermissionsBitField,
-  ChannelType,
-} = require("discord.js");
+const { Client, Events, PermissionsBitField, ChannelType } = require("discord.js");
 const logger = require("../../logging");
 const config = require("../../config.json");
 
@@ -26,16 +21,12 @@ async function initModule(client) {
         console.error("Channel deletion was rejected. Reason:", reason);
       });
       delete channels[channels.indexOf(oldState.channel.id)];
-      logger.log(
-        `Deleted voice channel "${oldState.channel.name}" (${oldState.channel.id})`,
-      );
+      logger.log(`Deleted voice channel "${oldState.channel.name}" (${oldState.channel.id})`);
     }
 
     if (
       newState.channel === null ||
-      !config.modules.voice_managing.master_voices.includes(
-        newState.channel.id,
-      ) ||
+      !config.modules.voice_managing.master_voices.includes(newState.channel.id) ||
       newState.member === null ||
       client.user === null
     ) {
@@ -56,18 +47,14 @@ async function initModule(client) {
         if (newState.member === null) {
           return;
         }
-        channel.permissionOverwrites
-          .edit(newState.member, { ManageChannels: true })
-          .catch((reason) => {
-            logger.error("Permission overwrite was rejected. Reason:", reason);
-          });
+        channel.permissionOverwrites.edit(newState.member, { ManageChannels: true }).catch((reason) => {
+          logger.error("Permission overwrite was rejected. Reason:", reason);
+        });
         //@ts-ignore
         newState.member.voice.setChannel(channel).catch((reason) => {
           logger.error("Move member action was rejected. Reason:", reason);
         });
-        logger.log(
-          `Moved ${newState.member.displayName} (${newState.member.id}) to a new voice channel`,
-        );
+        logger.log(`Moved ${newState.member.displayName} (${newState.member.id}) to a new voice channel`);
         channels.push(channel.id);
       })
       .catch((reason) => {

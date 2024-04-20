@@ -22,17 +22,14 @@ async function initModule(/** @type {Client} */ client) {
   }
 
   if (counters.online.enabled) {
-    await guild.members
-      .fetch({ withPresences: true })
-      .then(async (fetchedMembers) => {
-        const updateOnlineCounter = require("./counters/online");
-        await updateOnlineCounter(guild, fetchedMembers, counters.online);
-        setInterval(
-          async () =>
-            await updateOnlineCounter(guild, fetchedMembers, counters.online),
-          config.modules.channel_counters.updateInterval,
-        );
-      });
+    await guild.members.fetch({ withPresences: true }).then(async (fetchedMembers) => {
+      const updateOnlineCounter = require("./counters/online");
+      await updateOnlineCounter(guild, fetchedMembers, counters.online);
+      setInterval(
+        async () => await updateOnlineCounter(guild, fetchedMembers, counters.online),
+        config.modules.channel_counters.updateInterval,
+      );
+    });
     logger.log("Online counter is set up.");
   }
 

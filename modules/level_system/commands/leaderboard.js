@@ -18,12 +18,8 @@ function sortObjectByValue(obj) {
 }
 
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("leaderboard")
-    .setDescription("Показує топ 10 людей по кількості XP"),
-  async execute(
-    /** @type {import("discord.js").Interaction<import("discord.js").CacheType>}*/ interaction,
-  ) {
+  data: new SlashCommandBuilder().setName("leaderboard").setDescription("Показує топ 10 людей по кількості XP"),
+  async execute(/** @type {import("discord.js").Interaction<import("discord.js").CacheType>}*/ interaction) {
     if (!config.modules.level_system.enabled) {
       //@ts-ignore
       await interaction.reply({
@@ -47,9 +43,7 @@ module.exports = {
             new EmbedBuilder()
               .setColor("Red")
               .setTitle("Помилка")
-              .setDescription(
-                "Виникла проблема при виконанні команди. :stop_sign:",
-              ),
+              .setDescription("Виникла проблема при виконанні команди. :stop_sign:"),
           ],
         });
         return;
@@ -58,11 +52,7 @@ module.exports = {
       if (!rows) {
         //@ts-ignore
         await interaction.reply({
-          embeds: [
-            new EmbedBuilder()
-              .setColor("Yellow")
-              .setDescription("Таблиця лідерів наразі пуста."),
-          ],
+          embeds: [new EmbedBuilder().setColor("Yellow").setDescription("Таблиця лідерів наразі пуста.")],
         });
         return;
       }
@@ -87,12 +77,7 @@ module.exports = {
       message = message.concat("\n```");
       //@ts-ignore
       await interaction.reply({
-        embeds: [
-          new EmbedBuilder()
-            .setColor(0xd4c47c)
-            .setTitle("Таблиця лідерів")
-            .setDescription(message),
-        ],
+        embeds: [new EmbedBuilder().setColor(0xd4c47c).setTitle("Таблиця лідерів").setDescription(message)],
       });
     });
   },

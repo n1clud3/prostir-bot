@@ -12,9 +12,7 @@ module.exports = async function updateOnlineCounter(guild, members, settings) {
   const channel = guild.channels.cache.get(settings.channelId);
   if (!channel) return;
 
-  const totalOnline = members.filter(
-    (member) => member.presence?.status === "online",
-  );
+  const totalOnline = members.filter((member) => member.presence?.status === "online");
   logger.debug("totalOnline.size :", totalOnline.size);
   const counter_label = `Онлайн: ${totalOnline.size}`;
 

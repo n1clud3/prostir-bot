@@ -16,9 +16,7 @@ for (const folder of modulesFolders) {
   logger.log(folder);
   const commandsPath = path.join(foldersPath, folder, "commands");
   try {
-    const commandFiles = fs
-      .readdirSync(commandsPath)
-      .filter((file) => file.endsWith(".js"));
+    const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith(".js"));
     // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
     for (const file of commandFiles) {
       const filePath = path.join(commandsPath, file);
@@ -26,9 +24,7 @@ for (const folder of modulesFolders) {
       if ("data" in command && "execute" in command) {
         commands.push(command.data.toJSON());
       } else {
-        logger.warn(
-          `The command at ${filePath} is missing a required "data" or "execute" property.`,
-        );
+        logger.warn(`The command at ${filePath} is missing a required "data" or "execute" property.`);
       }
     }
   } catch (error) {
@@ -47,20 +43,13 @@ const rest = new REST().setToken(config.token);
 // and deploy your commands!
 (async () => {
   try {
-    console.log(
-      `Started refreshing ${commands.length} application (/) commands.`,
-    );
+    console.log(`Started refreshing ${commands.length} application (/) commands.`);
 
     // The put method is used to fully refresh all commands in the guild with the current set
-    const data = await rest.put(
-      Routes.applicationGuildCommands(config.clientId, config.guildId),
-      { body: commands },
-    );
+    const data = await rest.put(Routes.applicationGuildCommands(config.clientId, config.guildId), { body: commands });
 
     //@ts-ignore
-    logger.log(
-      `Successfully reloaded ${data.length} application (/) commands.`,
-    );
+    logger.log(`Successfully reloaded ${data.length} application (/) commands.`);
   } catch (error) {
     // And of course, make sure you catch and log any errors!
     logger.error(error);
