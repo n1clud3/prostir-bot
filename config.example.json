@@ -5,10 +5,7 @@
   "modules": {
     "voice_managing": {
       "enabled": true,
-      "master_voices": [
-        "master channel id here",
-        "you can put multiple"
-      ]
+      "master_voices": ["master channel id here", "you can put multiple"]
     },
     "level_system": {
       "enabled": true,
@@ -20,10 +17,7 @@
         "reward": 2,
         "interval": 5000
       },
-      "ignoredChannels": [
-        "ingored channel id here",
-        "you can put multiple"
-      ],
+      "ignoredChannels": ["ingored channel id here", "you can put multiple"],
       "rewards": [
         {
           "level": 1,

@@ -1,14 +1,14 @@
 //@ts-check
 
 /**
- * @param {Date} timestamp 
+ * @param {Date} timestamp
  * @returns {string} formatted UTC string
  */
 function generatePaddedTimestamp(timestamp) {
   const hours = timestamp.getUTCHours().toString().padStart(2, "0");
   const minutes = timestamp.getUTCMinutes().toString().padStart(2, "0");
   const seconds = timestamp.getUTCSeconds().toString().padStart(2, "0");
-  return hours + ":" + minutes + ":" + seconds
+  return hours + ":" + minutes + ":" + seconds;
 }
 
 /**
@@ -42,11 +42,11 @@ function warn(...msg) {
 
 /**
  * Error to send to console
- * @param {...any} msg 
+ * @param {...any} msg
  */
 function error(...msg) {
   const timestamp = generatePaddedTimestamp(new Date());
   console.error(`[UTC${timestamp}][ERROR]`, ...msg);
 }
 
-module.exports = {debug, log, warn, error}
+module.exports = { debug, log, warn, error };

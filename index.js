@@ -3,16 +3,18 @@ const { Client, Events, GatewayIntentBits } = require("discord.js");
 const config = require("./config.json");
 const logger = require("./logging");
 
-const client = new Client({ intents: [
-  GatewayIntentBits.Guilds,
-  GatewayIntentBits.GuildVoiceStates,
-  GatewayIntentBits.GuildMessages,
-  GatewayIntentBits.MessageContent,
-  GatewayIntentBits.GuildMembers,
-  GatewayIntentBits.GuildPresences,
-]});
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildPresences,
+  ],
+});
 
-client.once(Events.ClientReady, e => {
+client.once(Events.ClientReady, (e) => {
   logger.log(`Logged in as "${e.user.tag}"`);
 
   for (const mod in config.modules) {
