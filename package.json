@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "set RUN_TESTS=1 && node .",
-    "deploycmds": "node deploy-commands.js"
+    "deploycmds": "node deploy-commands.js",
+    "convertdb": "node convert-botdb.js"
   },
   "keywords": [],
   "author": "",

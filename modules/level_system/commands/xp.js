@@ -1,15 +1,16 @@
 //@ts-check
 
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const sqlite3 = require("sqlite3").verbose();
-const logger = require("./../../../logging");
-const config = require("./../../../config.json");
-const { calculateLevel, calculateXP } = require("./../.");
+const data_manager = require("../../../data_manager");
+const logger = require("../../../logging");
+const config = require("../../../config.json");
+const { calculateLevel, calculateXP } = require("../.");
 
 module.exports = {
   data: new SlashCommandBuilder().setName("xp").setDescription("Дізнайтеся вашу кількість очок досвіду."),
   async execute(/** @type {import("discord.js").Interaction<import("discord.js").CacheType>}*/ interaction) {
     if (!config.modules.level_system.enabled) {
+      logger.log(`${interaction.user.username} tried to run /xp command in a disabled module "level_system".`);
       //@ts-ignore
       await interaction.reply({
         embeds: [
@@ -22,52 +23,50 @@ module.exports = {
       return;
     }
 
-    const bot_db = new sqlite3.Database("bot.db");
-    bot_db.get("SELECT xp FROM levels_data WHERE uid = (?)", interaction.user.id, async (err, row) => {
-      if (err) {
-        logger.error("DB", err);
-        //@ts-ignore
-        await interaction.reply({
-          embeds: [
-            new EmbedBuilder()
-              .setColor("Red")
-              .setTitle("Помилка")
-              .setDescription("Виникла проблема при виконанні команди :stop_sign:"),
-          ],
-        });
-        return;
-      }
-
-      let xp = 0;
-      let lvl = 0;
-
-      if (row) {
-        xp = row.xp;
-        lvl = calculateLevel(row.xp);
-      }
+    const df = data_manager.readDatafile("level_system");
+    if (!df) {
+      logger.log(`${interaction.user.username} tried to run /xp command. Could not load the datafile.`);
       //@ts-ignore
       await interaction.reply({
         embeds: [
-          new EmbedBuilder().setColor(0xd4c47c).addFields(
-            {
-              name: "Кількість XP :star:",
-              value: `\`\`\`${xp} XP\`\`\``,
-              inline: true,
-            },
-            {
-              name: "Ваш рівень :chart_with_upwards_trend:",
-              value: `\`\`\`LVL ${lvl}\`\`\``,
-              inline: true,
-            },
-            {
-              name: "До наступного рівня :star2:",
-              value: `\`\`\`${calculateXP(lvl, config.modules.level_system)} XP\`\`\``,
-              inline: true,
-            },
-          ),
+          new EmbedBuilder()
+            .setColor("Red")
+            .setTitle("Помилка")
+            .setDescription("Виникла проблема при виконанні команди :stop_sign:"),
         ],
       });
+      return;
+    }
+
+    let xp = 0;
+    let lvl = 0;
+
+    if (df[interaction.user.id]) {
+      xp = df[interaction.user.id].xp;
+      lvl = calculateLevel(df[interaction.user.id].xp);
+    }
+
+    //@ts-ignore
+    await interaction.reply({
+      embeds: [
+        new EmbedBuilder().setColor(0xd4c47c).addFields(
+          {
+            name: "Кількість XP :star:",
+            value: `\`\`\`${xp} XP\`\`\``,
+            inline: true,
+          },
+          {
+            name: "Ваш рівень :chart_with_upwards_trend:",
+            value: `\`\`\`LVL ${lvl}\`\`\``,
+            inline: true,
+          },
+          {
+            name: "До наступного рівня :star2:",
+            value: `\`\`\`${calculateXP(lvl, config.modules.level_system)} XP\`\`\``,
+            inline: true,
+          },
+        ),
+      ],
     });
-    bot_db.close();
   },
 };
