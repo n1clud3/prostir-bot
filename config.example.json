@@ -9,10 +9,10 @@
     },
     "level_system": {
       "enabled": true,
-      "messageBaseReward": 6,
+      "messageMinReward": 5,
       "messageLengthXPBonusMultiplier": 0.1,
+      "baseLevelXP": 50,
       "nextLevelXPReqMultiplier": 2.0,
-      "baseXP": 5,
       "voiceXP": {
         "reward": 2,
         "interval": 5000
