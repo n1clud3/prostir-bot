@@ -23,6 +23,16 @@ function calculateLevel(xp) {
 }
 
 /**
+ * Calculates XP required for a given level
+ * @param {number} level 
+ * @param {{baseXP: number, nextLevelXPReqMultiplier: number}} settings 
+ * @returns Amount of XP required for a given level
+ */
+function calculateXP(level, settings) {
+  return (settings.baseXP * (Math.pow(settings.nextLevelXPReqMultiplier, level))) / (settings.nextLevelXPReqMultiplier - 1);
+}
+
+/**
  * @param {number} level
  * @param {Message<boolean>} msg
  * @returns boolean
@@ -219,16 +229,8 @@ function initModule(/**@type {Client}*/ client) {
   client.on(Events.MessageCreate, messageCreate);
   client.on(Events.VoiceStateUpdate, voiceStateUpdate);
   setInterval(voiceXPFarmingCallback, config.modules.level_system.voiceXP.interval);
-
-  if (process.env.RUN_TESTS) {
-    logger.log("calculateLevel() Test")
-    logger.log(`baseXP: ${config.modules.level_system.baseXP}. nextLevelXPReqMultiplier: ${config.modules.level_system.nextLevelXPReqMultiplier}`);
-    for (let i = 0; i <= 5000; i+=10) {
-      logger.log(`XP: ${i}; LVL: ${calculateLevel(i)}`);
-    }
-  }
-
+  
   logger.log("Level system is set up.");
 }
 
-module.exports = { initModule, calculateLevel, handleCommands }
+module.exports = { initModule, calculateLevel, calculateXP, handleCommands }

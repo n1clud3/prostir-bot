@@ -4,7 +4,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const sqlite3 = require("sqlite3").verbose();
 const logger = require("./../../../logging");
 const config = require("./../../../config.json");
-const { calculateLevel } = require("./../.");
+const { calculateLevel, calculateXP } = require("./../.");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -50,12 +50,17 @@ module.exports = {
           .addFields(
             {
               "name": "Кількість XP :star:",
-              "value": `\`\`\`${xp}\`\`\``,
+              "value": `\`\`\`${xp} XP\`\`\``,
               "inline": true,
             },
             {
               "name": "Ваш рівень :chart_with_upwards_trend:",
-              "value": `\`\`\`${lvl}\`\`\``,
+              "value": `\`\`\`LVL ${lvl}\`\`\``,
+              "inline": true,
+            },
+            {
+              "name": "До наступного рівня :star2:",
+              "value": `\`\`\`${calculateXP(lvl, config.modules.level_system)} XP\`\`\``,
               "inline": true,
             }
           )
