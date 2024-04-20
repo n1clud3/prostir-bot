@@ -47,7 +47,6 @@ module.exports = {
       await interaction.reply({embeds: [
         new EmbedBuilder()
           .setColor(0xd4c47c)
-          .setTitle("Інформація")
           .addFields(
             {
               "name": "Кількість XP :star:",
