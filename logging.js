@@ -28,16 +28,7 @@ function debug(...msg) {
  */
 function log(...msg) {
   const timestamp = generatePaddedTimestamp(new Date());
-  console.log(`[UTC${timestamp}][LOG]`, ...msg);
-}
-
-/**
- * Message to send to console
- * @param {...any} msg
- */
-function info(...msg) {
-  const timestamp = generatePaddedTimestamp(new Date());
-  console.info(`[UTC${timestamp}][LOG]`, ...msg);
+  console.log(`[UTC${timestamp}][INFO]`, ...msg);
 }
 
 /**
