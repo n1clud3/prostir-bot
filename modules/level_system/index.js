@@ -42,17 +42,25 @@ function calculateXP(level, settings) {
  */
 function checkForReward(level, msg) {
   const rewards = config.modules.level_system.rewards;
+  logger.debug("Checking for reward.");
+  logger.debug(rewards);
   for (const reward of rewards) {
+    logger.debug("Checking reward", reward);
+    logger.debug("Required level fulfilled?", level >= reward.level);
     if (level >= reward.level) {
+      logger.debug("Reward type", reward.type);
       if (reward.type === "grant_role") {
         if (msg.member === null) {
           logger.error("Member is null.");
           return false;
         }
-        if (msg.member.roles.cache.has(reward.role_id)) return false;
+        if (msg.member.roles.cache.has(reward.role_id)) {
+          logger.debug("Member already has the reward");
+          return false;
+        }
         msg.member.roles.add(reward.role_id).catch((reason) => {
           logger.error("Could not add role to a user. Reason:", reason);
-          return;
+          return false;
         });
         logger.log(`${msg.author.username} got a ${reward.type} reward!`);
         return true;
