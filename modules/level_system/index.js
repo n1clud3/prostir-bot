@@ -186,7 +186,7 @@ const voiceStateUpdate = async (oldState, newState) => {
     if (removed > -1) voice_xp_farmers.splice(removed, 1);
   } else if (oldState.channelId === null || !newState.member.voice.selfDeaf) {
     logger.debug(newState.member.user.username, "Adding to voice XP farmers");
-    voice_xp_farmers.push(newState.member.user.id);
+    if (!voice_xp_farmers.includes(newState.member.user.id)) voice_xp_farmers.push(newState.member.user.id);
   }
   logger.debug(voice_xp_farmers);
 };
