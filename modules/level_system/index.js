@@ -170,13 +170,14 @@ const voice_xp_farmers = [];
  * @param {VoiceState} newState
  */
 const voiceStateUpdate = async (oldState, newState) => {
+  logger.log("Fire voiceStateUpdate lessgo");
   if (!newState.member || newState.member.user.bot) return; // No XP for bots
-  if (newState.channelId === null) {
-    logger.debug(newState.member.user.username, "left voice. Removing from voice XP farmers");
+  if (newState.channelId === null || newState.member.voice.selfDeaf) {
+    logger.debug(newState.member.user.username, "Removing from voice XP farmers");
     const removed = voice_xp_farmers.indexOf(newState.member.user.id);
     if (removed > -1) voice_xp_farmers.splice(removed, 1);
-  } else if (oldState.channelId === null) {
-    logger.debug(newState.member.user.username, "joined voice. Adding to voice XP farmers");
+  } else if (oldState.channelId === null || !newState.member.voice.selfDeaf) {
+    logger.debug(newState.member.user.username, "Adding to voice XP farmers");
     voice_xp_farmers.push(newState.member.user.id);
   }
   logger.debug(voice_xp_farmers);
