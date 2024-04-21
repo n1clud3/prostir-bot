@@ -178,7 +178,7 @@ const voice_xp_farmers = [];
  * @param {VoiceState} newState
  */
 const voiceStateUpdate = async (oldState, newState) => {
-  logger.log("Fire voiceStateUpdate lessgo");
+  logger.debug("voiceStateUpdate event fired!");
   if (!newState.member || newState.member.user.bot) return; // No XP for bots
   if (newState.channelId === null || newState.member.voice.selfDeaf) {
     logger.debug(newState.member.user.username, "Removing from voice XP farmers");
@@ -198,6 +198,7 @@ const voiceXPFarmingCallback = () => {
     logger.debug("Giving voice farmer reward to", uid);
 
     const reward = config.modules.level_system.voiceXP.reward * voice_xp_farmers.length * config.modules.level_system.voiceXP.groupFarmingMultiplier;
+    logger.debug("Reward:", reward);
 
     if (!df[uid]) {
       df[uid] = {};
