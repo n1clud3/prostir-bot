@@ -44,23 +44,23 @@ function checkForReward(level, msg) {
   const rewards = config.modules.level_system.rewards;
   logger.debug("Checking for reward.");
   logger.debug(rewards);
+  if (msg.member === null) {
+    logger.error("Member is null.");
+    return false;
+  }
   for (const reward of rewards) {
     logger.debug("Checking reward", reward);
     logger.debug("Required level fulfilled?", level >= reward.level);
     if (level >= reward.level) {
       logger.debug("Reward type", reward.type);
       if (reward.type === "grant_role") {
-        if (msg.member === null) {
-          logger.error("Member is null.");
-          return false;
-        }
         if (msg.member.roles.cache.has(reward.role_id)) {
           logger.debug("Member already has the reward");
-          return false;
+          continue;
         }
         msg.member.roles.add(reward.role_id).catch((reason) => {
           logger.error("Could not add role to a user. Reason:", reason);
-          return false;
+          return;
         });
         logger.log(`${msg.author.username} got a ${reward.type} reward!`);
         return true;
