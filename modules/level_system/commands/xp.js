@@ -47,6 +47,7 @@ module.exports = {
       return;
     }
 
+    //@ts-ignore
     const target = interaction.options.getUser("target") ?? interaction.user;
 
     let xp = 0;
