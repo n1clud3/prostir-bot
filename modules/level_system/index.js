@@ -189,14 +189,16 @@ const voiceXPFarmingCallback = () => {
   for (const uid of voice_xp_farmers) {
     logger.debug("Giving voice farmer reward to", uid);
 
+    const reward = config.modules.level_system.voiceXP.reward * voice_xp_farmers.length * config.modules.level_system.voiceXP.groupFarmingMultiplier;
+
     if (!df[uid]) {
       df[uid] = {};
-      df[uid].xp = config.modules.level_system.voiceXP.reward;
+      df[uid].xp = reward;
       if (data_manager.writeDatafile("level_system", df) === null) {
         logger.error("Failed to write to datafile");
       }
     } else {
-      df[uid].xp += config.modules.level_system.voiceXP.reward;
+      df[uid].xp += reward;
       if (data_manager.writeDatafile("level_system", df) === null) {
         logger.error("Failed to write to datafile");
       }
