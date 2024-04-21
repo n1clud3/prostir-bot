@@ -7,7 +7,16 @@ const config = require("../../../config.json");
 const { calculateLevel, calculateXP } = require("../.");
 
 module.exports = {
-  data: new SlashCommandBuilder().setName("xp").setDescription("Дізнайтеся вашу кількість очок досвіду."),
+  data: new SlashCommandBuilder()
+    .setName("xp")
+    .setDescription("Дізнайтеся вашу кількість очок досвіду.")
+    .addUserOption((option) => 
+      option
+        .setName("target")
+        .setDescription("Ціль для перегляду досвіду")
+        .setRequired(false)
+    )
+    .setDMPermission(false),
   async execute(/** @type {import("discord.js").Interaction<import("discord.js").CacheType>}*/ interaction) {
     if (!config.modules.level_system.enabled) {
       logger.log(`${interaction.user.username} tried to run /xp command in a disabled module "level_system".`);
@@ -38,25 +47,29 @@ module.exports = {
       return;
     }
 
+    const target = interaction.options.getUser("target") ?? interaction.user;
+
     let xp = 0;
     let lvl = 0;
 
-    if (df[interaction.user.id]) {
-      xp = df[interaction.user.id].xp;
-      lvl = calculateLevel(df[interaction.user.id].xp);
+    if (df[target.id]) {
+      xp = df[target.id].xp;
+      lvl = calculateLevel(df[target.id].xp);
     }
 
     //@ts-ignore
-    await interaction.reply({
-      embeds: [
-        new EmbedBuilder().setColor(0xd4c47c).addFields(
+    await interaction.reply({ embeds: [
+      new EmbedBuilder()
+        .setColor(0xd4c47c)
+        .setTitle(`Досвід учасника ${target.username}`)
+        .addFields(
           {
             name: "Кількість XP :star:",
             value: `\`\`\`${xp} XP\`\`\``,
             inline: true,
           },
           {
-            name: "Ваш рівень :chart_with_upwards_trend:",
+            name: "Рівень :chart_with_upwards_trend:",
             value: `\`\`\`LVL ${lvl}\`\`\``,
             inline: true,
           },
