@@ -180,11 +180,11 @@ const voice_xp_farmers = [];
 const voiceStateUpdate = async (oldState, newState) => {
   logger.debug("voiceStateUpdate event fired!");
   if (!oldState.member || !newState.member || newState.member.user.bot) return; // No XP for bots
-  if (newState.channelId === null || ((oldState.member.voice.selfDeaf === newState.member.voice.selfDeaf) && newState.member.voice.selfDeaf)) {
+  if (newState.channelId === null || oldState.member.voice.selfDeaf === newState.member.voice.selfDeaf) {
     logger.debug(newState.member.user.username, "Removing from voice XP farmers");
     const removed = voice_xp_farmers.indexOf(newState.member.user.id);
     if (removed > -1) voice_xp_farmers.splice(removed, 1);
-  } else if (oldState.channelId === null || !((oldState.member.voice.selfDeaf === newState.member.voice.selfDeaf) && newState.member.voice.selfDeaf)) {
+  } else if (oldState.channelId === null || oldState.member.voice.selfDeaf !== newState.member.voice.selfDeaf) {
     logger.debug(newState.member.user.username, "Adding to voice XP farmers");
     voice_xp_farmers.push(newState.member.user.id);
   }
