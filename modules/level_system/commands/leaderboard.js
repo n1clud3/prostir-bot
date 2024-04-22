@@ -19,7 +19,7 @@ function sortObjectByValue(obj) {
 }
 
 module.exports = {
-  data: new SlashCommandBuilder().setName("leaderboard").setDescription("Показує топ 10 людей по кількості XP"),
+  data: new SlashCommandBuilder().setName("leaderboard").setDescription("Показує топ 25 людей по кількості XP"),
   async execute(/** @type {import("discord.js").Interaction<import("discord.js").CacheType>}*/ interaction) {
     if (!config.modules.level_system.enabled) {
       logger.log(`${interaction.user.username} tried to run /leaderboard command in a disabled module "level_system".`);
@@ -67,7 +67,7 @@ module.exports = {
     let i = 1;
 
     for (const uid in sortObjectByValue(leaderboard)) {
-      if (i > 10) break;
+      if (i > 25) break;
       const username = (await interaction.client.users.fetch(uid)).username;
       message = message.concat(
         `\n${i}. [2;33m[2;30m[2;37m[2;36m${username}[0m[2;37m[0m[2;30m[0m[2;33m[2;30m - [0m[2;33m${leaderboard[uid].toString()} XP[2;30m - [0m[2;33m[2;34mLVL ${calculateLevel(leaderboard[uid]).toString()}[0m[2;33m[0m[2;33m[0m`,
