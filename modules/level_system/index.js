@@ -2,7 +2,7 @@
 
 const path = require("node:path");
 const fs = require("node:fs");
-const { Events, Client, Collection, Message, VoiceState, EmbedBuilder } = require("discord.js");
+const { Events, Client, Collection, Message, VoiceState, EmbedBuilder, parseEmoji } = require("discord.js");
 const logger = require("../../logging");
 const config = require("../../config.json");
 const data_manager = require("../../data_manager");
@@ -151,24 +151,13 @@ const messageCreate = (/** @type {Message<boolean>} */ msg) => {
   const old_lvl = calculateLevel(df[msg.author.id].xp);
   const new_lvl = calculateLevel(df[msg.author.id].xp + reward);
   const grantedReward = checkForReward(new_lvl, msg);
+
   if (old_lvl < new_lvl) {
-    let response_message = `:up: Ви досягли ${new_lvl} рівня!`;
-    if (grantedReward) {
-      response_message = response_message.concat("\n\n:military_medal: Вам було видано роль за ваш досягнутий рівень.");
-    }
-    msg.reply({
-      embeds: [new EmbedBuilder().setColor(0xd4c47c).setTitle("LVL UP!").setDescription(response_message)],
-    });
-  } else if (grantedReward) {
-    msg.reply({
-      embeds: [
-        new EmbedBuilder()
-          .setColor(0xd4c47c)
-          .setTitle("Інформація")
-          .setDescription(":military_medal: Вам було видано роль за ваш досягнутий рівень."),
-      ],
-    });
+    msg.react("🌟");
+    msg.react("🆙");
   }
+
+  if (grantedReward) msg.react("🎖️");
 };
 
 const voice_xp_farmers = [];
