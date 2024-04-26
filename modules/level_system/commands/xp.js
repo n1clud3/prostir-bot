@@ -76,7 +76,7 @@ module.exports = {
           },
           {
             name: "До наступного рівня :star2:",
-            value: `\`\`\`${calculateXP(lvl, config.modules.level_system)} XP\`\`\``,
+            value: `\`\`\`${calculateXP(lvl, config.modules.level_system) - xp} XP\`\`\``,
             inline: true,
           },
         ),
