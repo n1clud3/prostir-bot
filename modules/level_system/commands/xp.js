@@ -55,7 +55,7 @@ module.exports = {
 
     if (df[target.id]) {
       xp = df[target.id].xp;
-      lvl = calculateLevel(df[target.id].xp);
+      lvl = calculateLevel(df[target.id].xp, config.modules.level_system);
     }
 
     //@ts-ignore

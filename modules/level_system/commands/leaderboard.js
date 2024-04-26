@@ -70,7 +70,7 @@ module.exports = {
       if (i > 25) break;
       const username = (await interaction.client.users.fetch(uid)).username;
       message = message.concat(
-        `\n${i}. [2;33m[2;30m[2;37m[2;36m${username}[0m[2;37m[0m[2;30m[0m[2;33m[2;30m - [0m[2;33m${leaderboard[uid].toString()} XP[2;30m - [0m[2;33m[2;34mLVL ${calculateLevel(leaderboard[uid]).toString()}[0m[2;33m[0m[2;33m[0m`,
+        `\n${i}. [2;33m[2;30m[2;37m[2;36m${username}[0m[2;37m[0m[2;30m[0m[2;33m[2;30m - [0m[2;33m${leaderboard[uid].toString()} XP[2;30m - [0m[2;33m[2;34mLVL ${calculateLevel(leaderboard[uid], config.modules.level_system).toString()}[0m[2;33m[0m[2;33m[0m`,
       );
       i++;
     }

@@ -10,14 +10,15 @@ const data_manager = require("../../data_manager");
 /**
  * Calculates level from the XP amount.
  * @param {number} xp
+ * @param {{baseLevelXP: number, nextLevelXPReqMultiplier: number}} settings
  * @returns {number} The calculated level
  */
-function calculateLevel(xp) {
+function calculateLevel(xp, settings) {
   let level = 0;
-  let xpRequired = config.modules.level_system.baseLevelXP; // Initial XP required for level 2
+  let xpRequired = settings.baseLevelXP; // Initial XP required for level 2
   while (xp >= xpRequired) {
     level++;
-    xpRequired *= config.modules.level_system.nextLevelXPReqMultiplier; // Increase XP required for next level by X times
+    xpRequired *= 2.0 * settings.nextLevelXPReqMultiplier; // Increase XP required for next level by X times
   }
   return level;
 }
@@ -30,8 +31,8 @@ function calculateLevel(xp) {
  */
 function calculateXP(level, settings) {
   return Math.round(
-    (settings.baseLevelXP * Math.pow(settings.nextLevelXPReqMultiplier, level)) /
-      (settings.nextLevelXPReqMultiplier - 1),
+    (settings.baseLevelXP * Math.pow(settings.nextLevelXPReqMultiplier * 2.0, level)) /
+      (settings.nextLevelXPReqMultiplier * 2.0 - 1),
   );
 }
 
@@ -137,8 +138,6 @@ const messageCreate = (/** @type {Message<boolean>} */ msg) => {
   if (!df[msg.author.id]) {
     df[msg.author.id] = {};
     df[msg.author.id].xp = reward;
-    // df[msg.author.id].nextLvlXP = reward;
-    // df[msg.author.id].lvl = calculateLevel(reward);
     data_manager.writeDatafile("level_system", df);
   } else {
     df[msg.author.id].xp += reward;
@@ -146,10 +145,10 @@ const messageCreate = (/** @type {Message<boolean>} */ msg) => {
   }
 
   logger.debug(
-    `Their XP: ${df[msg.author.id].xp + reward}. Their LVL: ${calculateLevel(df[msg.author.id].xp + reward)}`,
+    `Their XP: ${df[msg.author.id].xp + reward}. Their LVL: ${calculateLevel(df[msg.author.id].xp + reward, config.modules.level_system)}`,
   );
-  const old_lvl = calculateLevel(df[msg.author.id].xp);
-  const new_lvl = calculateLevel(df[msg.author.id].xp + reward);
+  const old_lvl = calculateLevel(df[msg.author.id].xp, config.modules.level_system);
+  const new_lvl = calculateLevel(df[msg.author.id].xp + reward, config.modules.level_system);
   const grantedReward = checkForReward(new_lvl, msg);
 
   if (old_lvl < new_lvl) {
