@@ -55,7 +55,7 @@ module.exports = {
 
     if (df[target.id]) {
       xp = df[target.id].xp;
-      lvl = calculateLevel(df[target.id].xp);
+      lvl = calculateLevel(xp, config.modules.level_system);
     }
 
     //@ts-ignore
@@ -76,7 +76,7 @@ module.exports = {
           },
           {
             name: "До наступного рівня :star2:",
-            value: `\`\`\`${calculateXP(lvl, config.modules.level_system) - xp} XP\`\`\``,
+            value: `\`\`\`${calculateXP(lvl + 1, config.modules.level_system) - xp} XP\`\`\``,
             inline: true,
           },
         ),

@@ -10,29 +10,60 @@ const data_manager = require("../../data_manager");
 /**
  * Calculates level from the XP amount.
  * @param {number} xp
+ * @param {{baseLevelXP: number, xpIncreaseAmount: number}} settings
  * @returns {number} The calculated level
  */
-function calculateLevel(xp) {
+function calculateLevel(xp, settings) {
+  // Base level 0
   let level = 0;
-  let xpRequired = config.modules.level_system.baseLevelXP; // Initial XP required for level 2
-  while (xp >= xpRequired) {
-    level++;
-    xpRequired *= config.modules.level_system.nextLevelXPReqMultiplier; // Increase XP required for next level by X times
+
+  // XP required for each level starting from level 1
+  let xpPerLevel = settings.baseLevelXP; // Starting XP per level
+  const xpIncreaseInterval = 10; // Increase interval for XP per level
+  const xpIncreaseAmount = settings.xpIncreaseAmount; // Amount of XP increase per level increase interval
+
+  // While the XP is greater than or equal to the XP required for the next level,
+  // increment the level and subtract the required XP from the total XP
+  while (xp >= xpPerLevel) {
+      level++;
+      xp -= xpPerLevel;
+
+      // Increase the XP required per level every 10 levels
+      if (level % xpIncreaseInterval === 0) {
+          xpPerLevel += xpIncreaseAmount;
+      }
   }
+
+  // Return the calculated level
   return level;
 }
 
 /**
  * Calculates XP required for a given level
  * @param {number} level
- * @param {{baseLevelXP: number, nextLevelXPReqMultiplier: number}} settings
+ * @param {{baseLevelXP: number, xpIncreaseAmount: number}} settings
  * @returns Amount of XP required for a given level
  */
 function calculateXP(level, settings) {
-  return Math.round(
-    (settings.baseLevelXP * Math.pow(settings.nextLevelXPReqMultiplier, level)) /
-      (settings.nextLevelXPReqMultiplier - 1),
-  );
+  let requiredXP = 0;
+
+    // XP required for each level starting from level 1
+    let xpPerLevel = settings.baseLevelXP; // Starting XP per level
+    const xpIncreaseInterval = 10; // Increase interval for XP per level
+    const xpIncreaseAmount = settings.xpIncreaseAmount; // Amount of XP increase per level increase interval
+
+    // Loop through each level up to the desired level
+    for (let i = 1; i <= level; i++) {
+        requiredXP += xpPerLevel;
+
+        // Increase the XP required per level every 10 levels
+        if (i % xpIncreaseInterval === 0) {
+            xpPerLevel += xpIncreaseAmount;
+        }
+    }
+
+    // Return the required XP
+    return requiredXP;
 }
 
 /**
@@ -146,10 +177,10 @@ const messageCreate = (/** @type {Message<boolean>} */ msg) => {
   }
 
   logger.debug(
-    `Their XP: ${df[msg.author.id].xp + reward}. Their LVL: ${calculateLevel(df[msg.author.id].xp + reward)}`,
+    `Their XP: ${df[msg.author.id].xp + reward}. Their LVL: ${calculateLevel(df[msg.author.id].xp + reward, config.modules.level_system)}`,
   );
-  const old_lvl = calculateLevel(df[msg.author.id].xp);
-  const new_lvl = calculateLevel(df[msg.author.id].xp + reward);
+  const old_lvl = calculateLevel(df[msg.author.id].xp, config.modules.level_system);
+  const new_lvl = calculateLevel(df[msg.author.id].xp + reward, config.modules.level_system);
   const grantedReward = checkForReward(new_lvl, msg);
 
   if (old_lvl < new_lvl) {

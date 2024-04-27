@@ -11,8 +11,8 @@
       "enabled": true,
       "messageMinReward": 5,
       "messageLengthXPBonusMultiplier": 0.1,
-      "baseLevelXP": 50,
-      "nextLevelXPReqMultiplier": 2.0,
+      "baseLevelXP": 100,
+      "xpIncreaseAmount": 100,
       "voiceXP": {
         "reward": 2,
         "interval": 5000
