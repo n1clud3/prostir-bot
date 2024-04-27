@@ -153,7 +153,6 @@ const messageCreate = (/** @type {Message<boolean>} */ msg) => {
   const grantedReward = checkForReward(new_lvl, msg);
 
   if (old_lvl < new_lvl) {
-    msg.react("🌟");
     msg.react("🆙");
   }
 
