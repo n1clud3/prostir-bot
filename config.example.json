@@ -39,6 +39,16 @@
           "channelId": "1230892572285599776"
         }
       }
+    },
+    "shortvids_convert": {
+      "enabled": true,
+      "rapidAPIkey": "",
+      "rapidAPIhost": "",
+      "converters": {
+        "reels": true,
+        "yt_shorts": false,
+        "tiktok": false
+      }
     }
   }
 }
