@@ -95,6 +95,31 @@ async function tiktokScraper(url) {
   }
 }
 
+/**
+ *
+ * @param {*} url
+ */
+async function shortsScraper(url) {
+  const options = {
+    method: 'GET',
+    url: 'https://youtube-media-downloader.p.rapidapi.com/v2/video/details',
+    params: {
+      videoId: url.split("/")[url.split("/").length - 1]
+    },
+    headers: {
+      'X-RapidAPI-Key': config.modules.shortvids_convert.rapidAPIkey,
+      'X-RapidAPI-Host': config.modules.shortvids_convert.converters.yt_shorts.rapidAPIhost
+    }
+  };
+
+  try {
+    const response = await axios.request(options);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 const messageCreateReels = async (/** @type {Message<boolean>} */ msg) => {
   if (!msg.content.startsWith("https://www.instagram.com/")) return;
   const link = msg.content;
@@ -134,13 +159,27 @@ const messageCreateTiktok = async (/** @type {Message<boolean>} */ msg) => {
   });
 
   const post = await tiktokScraper(link);
-
-  let dl_link = "";
-
-  logger.log(post);
-  dl_link = post.data.play;
-
+  
   try {
+    const dl_link = post.data.play;
+    const f = await downloadLink(dl_link);
+    response.edit({ embeds: [], content: "Посилання конвертовано!", files: [f] });
+  } catch (err) {
+    logger.error("Error trying to edit message:", err);
+  }
+}
+
+const messageCreateShorts = async (/** @type {Message<boolean>} */ msg) => {
+  if (!msg.content.startsWith("https://www.youtube.com/shorts/")) return;
+  const link = msg.content;
+  const response = await msg.reply({
+    embeds: [new EmbedBuilder().setColor(0xd4c47c).setDescription("Обробляю посилання, зачекайте...")],
+  });
+
+  const post = await shortsScraper(link);
+  
+  try {
+    const dl_link = post.videos.items[0].url;
     const f = await downloadLink(dl_link);
     response.edit({ embeds: [], content: "Посилання конвертовано!", files: [f] });
   } catch (err) {
@@ -151,7 +190,7 @@ const messageCreateTiktok = async (/** @type {Message<boolean>} */ msg) => {
 function initModule(/**@type {Client}*/ client) {
   if (config.modules.shortvids_convert.converters.reels.enabled) client.on(Events.MessageCreate, messageCreateReels);
   if (config.modules.shortvids_convert.converters.tiktok.enabled) client.on(Events.MessageCreate, messageCreateTiktok);
-  if (config.modules.shortvids_convert.converters.yt_shorts.enabled) logger.log("YT shorts links not implemented yet.");
+  if (config.modules.shortvids_convert.converters.yt_shorts.enabled) client.on(Events.MessageCreate, messageCreateShorts);
 
   logger.log("Shortvids converters are set up!");
 }

@@ -54,7 +54,8 @@
           "rapidAPIhost": "tiktok-scraper7.p.rapidapi.com"
         },
         "yt_shorts": {
-          "enabled": false
+          "enabled": true,
+          "rapidAPIhost": ""
         }
       }
     }
