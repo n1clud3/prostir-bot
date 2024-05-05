@@ -12,23 +12,19 @@ const config = require("../../config.json");
  * @returns {Promise<string, Error>}
  */
 async function downloadLink(url) {
-  const filename = url.split("/")[url.split("/").length - 1].split("?")[0];
-  logger.debug("filename:", filename);
+  const filename = "shortvid_cache.mp4";
 
-  const pathbuf = path.join("data", "shortvids_cache");
+  const pathbuf = path.join("data");
   const filepath = path.join(pathbuf, filename);
   fs.mkdirSync(pathbuf, { recursive: true });
-
-  if (fs.existsSync(filepath)) {
-    logger.log("File already exists!");
-    return path.join(pathbuf, filename).toString();
-  }
 
   const f = fs.createWriteStream(filepath);
 
   try {
     // @ts-ignore
-    const res = await axios.get(url, { responseType: "stream" });
+    const res = await axios.get(url, {
+      responseType: "stream"
+    });
     res.data.pipe(f);
 
     return new Promise((resolve, reject) => {
@@ -61,7 +57,7 @@ async function instaScraper(url) {
     },
     headers: {
       "X-RapidAPI-Key": config.modules.shortvids_convert.rapidAPIkey,
-      "X-RapidAPI-Host": config.modules.shortvids_convert.rapidAPIhost,
+      "X-RapidAPI-Host": config.modules.shortvids_convert.converters.reels.rapidAPIhost,
     },
   };
 
@@ -70,6 +66,32 @@ async function instaScraper(url) {
     return response.data.data.medias;
   } catch (error) {
     return error;
+  }
+}
+
+/**
+ *
+ * @param {*} url
+ */
+async function tiktokScraper(url) {
+  const options = {
+    method: 'GET',
+    url: 'https://tiktok-scraper7.p.rapidapi.com/',
+    params: {
+      url: url,
+      hd: '1'
+    },
+    headers: {
+      'X-RapidAPI-Key': config.modules.shortvids_convert.rapidAPIkey,
+      'X-RapidAPI-Host': config.modules.shortvids_convert.converters.tiktok.rapidAPIhost
+    }
+  };
+  
+  try {
+    const response = await axios.request(options);
+    return response.data;
+  } catch (error) {
+    console.error(error);
   }
 }
 
@@ -104,12 +126,32 @@ const messageCreateReels = async (/** @type {Message<boolean>} */ msg) => {
   }
 };
 
+const messageCreateTiktok = async (/** @type {Message<boolean>} */ msg) => {
+  if (!(msg.content.startsWith("https://www.tiktok.com/") || msg.content.startsWith("https://vm.tiktok.com/") )) return;
+  const link = msg.content;
+  const response = await msg.reply({
+    embeds: [new EmbedBuilder().setColor(0xd4c47c).setDescription("Обробляю посилання, зачекайте...")],
+  });
+
+  const post = await tiktokScraper(link);
+
+  let dl_link = "";
+
+  logger.log(post);
+  dl_link = post.data.play;
+
+  try {
+    const f = await downloadLink(dl_link);
+    response.edit({ embeds: [], content: "Посилання конвертовано!", files: [f] });
+  } catch (err) {
+    logger.error("Error trying to edit message:", err);
+  }
+}
+
 function initModule(/**@type {Client}*/ client) {
-  if (config.modules.shortvids_convert.converters.reels) client.on(Events.MessageCreate, messageCreateReels);
-
-  if (config.modules.shortvids_convert.converters.yt_shorts) logger.log("YT Shorts links not implemented yet.");
-
-  if (config.modules.shortvids_convert.converters.tiktok) logger.log("Tiktok links not implemented yet.");
+  if (config.modules.shortvids_convert.converters.reels.enabled) client.on(Events.MessageCreate, messageCreateReels);
+  if (config.modules.shortvids_convert.converters.tiktok.enabled) client.on(Events.MessageCreate, messageCreateTiktok);
+  if (config.modules.shortvids_convert.converters.yt_shorts.enabled) logger.log("YT shorts links not implemented yet.");
 
   logger.log("Shortvids converters are set up!");
 }
