@@ -39,6 +39,25 @@
           "channelId": "1230892572285599776"
         }
       }
+    },
+    "shortvids_convert": {
+      "enabled": true,
+      "rapidAPIkey": "",
+      "rapidAPIhost": "",
+      "converters": {
+        "reels": {
+          "enabled": true,
+          "rapidAPIhost": "instagram-looter2.p.rapidapi.com"
+        },
+        "tiktok": {
+          "enabled": true,
+          "rapidAPIhost": "tiktok-scraper7.p.rapidapi.com"
+        },
+        "yt_shorts": {
+          "enabled": true,
+          "rapidAPIhost": ""
+        }
+      }
     }
   }
 }
