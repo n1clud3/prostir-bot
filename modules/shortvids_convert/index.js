@@ -151,7 +151,8 @@ const messageCreateReels = async (/** @type {Message<boolean>} */ msg) => {
 
   try {
     const f = await downloadLink(dl_link);
-    if (fs.statSync(f).size > 25 * (1024^2)) {
+    logger.debug("Higher than 25mb?", fs.statSync(f).size > 25 * (1024 * 1024));
+    if (fs.statSync(f).size > 25 * (1024 * 1024)) {
       logger.error("Error trying to send a Reels video. File is larger than 25 MB.");
       response.edit({ embeds: [new EmbedBuilder().setColor("Red").setDescription("Відео важить більше 25MB, неможливо завантажити в чат.")] });
       return;
@@ -184,7 +185,8 @@ const messageCreateTiktok = async (/** @type {Message<boolean>} */ msg) => {
   try {
     const dl_link = post.data.play;
     const f = await downloadLink(dl_link);
-    if (fs.statSync(f).size > 25 * (1024^2)) {
+    logger.debug("Higher than 25mb?", fs.statSync(f).size > 25 * (1024 * 1024));
+    if (fs.statSync(f).size > 25 * (1024 * 1024)) {
       logger.error("Error trying to send a TikTok video. File is larger than 25 MB.");
       response.edit({ embeds: [new EmbedBuilder().setColor("Red").setDescription("Відео важить більше 25MB, неможливо завантажити в чат.")] });
       return;
@@ -217,7 +219,8 @@ const messageCreateShorts = async (/** @type {Message<boolean>} */ msg) => {
   try {
     const dl_link = post.videos.items[0].url;
     const f = await downloadLink(dl_link);
-    if (fs.statSync(f).size > 25 * (1024^2)) {
+    logger.debug("Higher than 25mb?", fs.statSync(f).size > 25 * (1024 * 1024));
+    if (fs.statSync(f).size > 25 * (1024 * 1024)) {
       logger.error("Error trying to send a YT Shorts video. File is larger than 25 MB.");
       response.edit({ embeds: [new EmbedBuilder().setColor("Red").setDescription("Відео важить більше 25MB, неможливо завантажити в чат.")] });
       return;
