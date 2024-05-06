@@ -136,7 +136,7 @@ const messageCreateReels = async (/** @type {Message<boolean>} */ msg) => {
       if (media.type === "video") dl_link = media.link;
       else {
         response.edit({
-          embeds: [new EmbedBuilder().setColor("Red").setDescription("Виникла помилка при обробці посилання!")],
+          embeds: [new EmbedBuilder().setColor("Red").setDescription("Виникла помилка при обробці посилання.")],
         });
         return;
       }
@@ -145,9 +145,14 @@ const messageCreateReels = async (/** @type {Message<boolean>} */ msg) => {
 
   try {
     const f = await downloadLink(dl_link);
-    response.edit({ embeds: [], files: [f] });
+    response.edit({ embeds: [], content: "Посилання конвертовано!", files: [f] });
   } catch (err) {
-    logger.error("Error trying to edit message:", err);
+    logger.error("Error trying to send a Reels video.", err);
+    try {
+      response.edit({ embeds: [new EmbedBuilder().setColor("Red").setDescription("Виникла помилка при обробці посилання.")] });
+    } catch (err) {
+      logger.error("Error trying to print out error embed (BRUH).", err);
+    }
   }
 };
 
@@ -165,7 +170,12 @@ const messageCreateTiktok = async (/** @type {Message<boolean>} */ msg) => {
     const f = await downloadLink(dl_link);
     response.edit({ embeds: [], content: "Посилання конвертовано!", files: [f] });
   } catch (err) {
-    logger.error("Error trying to edit message:", err);
+    logger.error("Error trying to send a TikTok video.", err);
+    try {
+      response.edit({ embeds: [new EmbedBuilder().setColor("Red").setDescription("Виникла помилка при обробці посилання.")] });
+    } catch (err) {
+      logger.error("Error trying to print out error embed (BRUH).", err);
+    }
   }
 }
 
@@ -183,7 +193,12 @@ const messageCreateShorts = async (/** @type {Message<boolean>} */ msg) => {
     const f = await downloadLink(dl_link);
     response.edit({ embeds: [], content: "Посилання конвертовано!", files: [f] });
   } catch (err) {
-    logger.error("Error trying to edit message:", err);
+    logger.error("Error trying to send a YT Shorts video.", err);
+    try {
+      response.edit({ embeds: [new EmbedBuilder().setColor("Red").setDescription("Виникла помилка при обробці посилання.")] });
+    } catch (err) {
+      logger.error("Error trying to print out error embed (BRUH).", err);
+    }
   }
 }
 
