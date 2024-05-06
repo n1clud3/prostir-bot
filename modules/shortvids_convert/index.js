@@ -1,5 +1,7 @@
 //@ts-check
 
+// FIXME: this whole file is rigged with boilerplates and repeatable code. damn.
+
 const { Client, Message, EmbedBuilder, Events } = require("discord.js");
 const axios = require("axios");
 const fs = require("node:fs");
@@ -46,7 +48,6 @@ async function downloadLink(url) {
 /**
  *
  * @param {*} url
- * @returns {Promise<any[], Error>}
  */
 async function instaScraper(url) {
   const options = {
@@ -138,7 +139,7 @@ const messageCreateReels = async (/** @type {Message<boolean>} */ msg) => {
 
   if (post.length > 0) {
     post.forEach((media) => {
-      if (media.type === "video") dl_link = media.link;
+      if (media.type === "video") { dl_link = media.link; return }
       else {
         response.edit({
           embeds: [new EmbedBuilder().setColor("Red").setDescription("Виникла помилка при обробці посилання.")],
@@ -150,6 +151,11 @@ const messageCreateReels = async (/** @type {Message<boolean>} */ msg) => {
 
   try {
     const f = await downloadLink(dl_link);
+    if (fs.statSync(f).size > 25 * (1024^2)) {
+      logger.error("Error trying to send a Reels video. File is larger than 25 MB.");
+      response.edit({ embeds: [new EmbedBuilder().setColor("Red").setDescription("Відео важить більше 25MB, неможливо завантажити в чат.")] });
+      return;
+    }
     response.edit({ embeds: [], content: "Посилання конвертовано!", files: [f] });
   } catch (err) {
     logger.error("Error trying to send a Reels video.", err);
@@ -178,6 +184,11 @@ const messageCreateTiktok = async (/** @type {Message<boolean>} */ msg) => {
   try {
     const dl_link = post.data.play;
     const f = await downloadLink(dl_link);
+    if (fs.statSync(f).size > 25 * (1024^2)) {
+      logger.error("Error trying to send a TikTok video. File is larger than 25 MB.");
+      response.edit({ embeds: [new EmbedBuilder().setColor("Red").setDescription("Відео важить більше 25MB, неможливо завантажити в чат.")] });
+      return;
+    }
     response.edit({ embeds: [], content: "Посилання конвертовано!", files: [f] });
   } catch (err) {
     logger.error("Error trying to send a TikTok video.", err);
@@ -206,6 +217,11 @@ const messageCreateShorts = async (/** @type {Message<boolean>} */ msg) => {
   try {
     const dl_link = post.videos.items[0].url;
     const f = await downloadLink(dl_link);
+    if (fs.statSync(f).size > 25 * (1024^2)) {
+      logger.error("Error trying to send a YT Shorts video. File is larger than 25 MB.");
+      response.edit({ embeds: [new EmbedBuilder().setColor("Red").setDescription("Відео важить більше 25MB, неможливо завантажити в чат.")] });
+      return;
+    }
     response.edit({ embeds: [], content: "Посилання конвертовано!", files: [f] });
   } catch (err) {
     logger.error("Error trying to send a YT Shorts video.", err);
