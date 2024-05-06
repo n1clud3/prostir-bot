@@ -122,6 +122,11 @@ async function shortsScraper(url) {
 
 const messageCreateReels = async (/** @type {Message<boolean>} */ msg) => {
   if (!msg.content.startsWith("https://www.instagram.com/")) return;
+  try {
+    msg.suppressEmbeds(true);
+  } catch (err) {
+    logger.error("Error trying to suppress embeds.", err);
+  }
   const link = msg.content;
   const response = await msg.reply({
     embeds: [new EmbedBuilder().setColor(0xd4c47c).setDescription("Обробляю посилання, зачекайте...")],
@@ -158,6 +163,11 @@ const messageCreateReels = async (/** @type {Message<boolean>} */ msg) => {
 
 const messageCreateTiktok = async (/** @type {Message<boolean>} */ msg) => {
   if (!(msg.content.startsWith("https://www.tiktok.com/") || msg.content.startsWith("https://vm.tiktok.com/") )) return;
+  try {
+    msg.suppressEmbeds(true);
+  } catch (err) {
+    logger.error("Error trying to suppress embeds.", err);
+  }
   const link = msg.content;
   const response = await msg.reply({
     embeds: [new EmbedBuilder().setColor(0xd4c47c).setDescription("Обробляю посилання, зачекайте...")],
@@ -181,6 +191,11 @@ const messageCreateTiktok = async (/** @type {Message<boolean>} */ msg) => {
 
 const messageCreateShorts = async (/** @type {Message<boolean>} */ msg) => {
   if (!msg.content.startsWith("https://www.youtube.com/shorts/")) return;
+  try {
+    msg.suppressEmbeds(true);
+  } catch (err) {
+    logger.error("Error trying to suppress embeds.", err);
+  }
   const link = msg.content;
   const response = await msg.reply({
     embeds: [new EmbedBuilder().setColor(0xd4c47c).setDescription("Обробляю посилання, зачекайте...")],
