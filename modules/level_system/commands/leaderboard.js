@@ -63,18 +63,18 @@ module.exports = {
       leaderboard[uid] = df[uid].xp;
     }
 
-    let message = "```ansi";
+    let message = "";
     let i = 1;
 
     for (const uid in sortObjectByValue(leaderboard)) {
-      if (i > 25) break;
+      if (i > 20) break;
       const username = (await interaction.client.users.fetch(uid)).username;
+      const prefix = (i <= 3) ? "#".repeat(i) : "";
       message = message.concat(
-        `\n${i}. [2;33m[2;30m[2;37m[2;36m${username}[0m[2;37m[0m[2;30m[0m[2;33m[2;30m - [0m[2;33m${leaderboard[uid].toString()} XP[2;30m - [0m[2;33m[2;34mLVL ${calculateLevel(leaderboard[uid], config.modules.level_system).toString()}[0m[2;33m[0m[2;33m[0m`,
+        `\n${prefix} ${i}. ${username} - :star: ${leaderboard[uid].toString()} XP - :chart_with_upwards_trend: LVL ${calculateLevel(leaderboard[uid], config.modules.level_system).toString()}`,
       );
       i++;
     }
-    message = message.concat("\n```");
     //@ts-ignore
     await interaction.reply({
       embeds: [new EmbedBuilder().setColor(0xd4c47c).setTitle("Таблиця лідерів").setDescription(message)],
