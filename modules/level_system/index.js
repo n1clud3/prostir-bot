@@ -73,20 +73,20 @@ function calculateXP(level, settings) {
  */
 function checkForReward(level, msg) {
   const rewards = config.modules.level_system.rewards;
-  logger.debug("Checking for reward.");
-  logger.debug(rewards);
+  logger.trace("Checking for reward.");
+  logger.trace(rewards);
   if (msg.member === null) {
     logger.error("Member is null.");
     return false;
   }
   for (const reward of rewards) {
-    logger.debug("Checking reward", reward);
-    logger.debug("Required level fulfilled?", level >= reward.level);
+    logger.trace("Checking reward", reward);
+    logger.trace("Required level fulfilled?", level >= reward.level);
     if (level >= reward.level) {
-      logger.debug("Reward type", reward.type);
+      logger.trace("Reward type", reward.type);
       if (reward.type === "grant_role") {
         if (msg.member.roles.cache.has(reward.role_id)) {
-          logger.debug("Member already has the reward");
+          logger.trace("Member already has the reward");
           continue;
         }
         msg.member.roles.add(reward.role_id).catch((reason) => {
@@ -161,7 +161,7 @@ const messageCreate = (/** @type {Message<boolean>} */ msg) => {
     config.modules.level_system.messageMinReward +
       msg.content.length * config.modules.level_system.messageLengthXPBonusMultiplier,
   );
-  logger.debug(`${msg.author.displayName} was rewarded with ${reward} XP!`);
+  logger.trace(`${msg.author.displayName} was rewarded with ${reward} XP!`);
 
   const df = data_manager.readDatafile("level_system");
   if (df === null) return;
@@ -176,7 +176,7 @@ const messageCreate = (/** @type {Message<boolean>} */ msg) => {
     data_manager.writeDatafile("level_system", df);
   }
 
-  logger.debug(
+  logger.trace(
     `Their XP: ${df[msg.author.id].xp + reward}. Their LVL: ${calculateLevel(df[msg.author.id].xp + reward, config.modules.level_system)}`,
   );
   const old_lvl = calculateLevel(df[msg.author.id].xp, config.modules.level_system);
@@ -197,29 +197,29 @@ const voice_xp_farmers = [];
  * @param {VoiceState} newState
  */
 const voiceStateUpdate = async (oldState, newState) => {
-  logger.debug("voiceStateUpdate event fired!");
+  logger.trace("voiceStateUpdate event fired!");
   if (!newState.member || newState.member.user.bot) return; // No XP for bots
   if (newState.channelId === null || newState.member.voice.selfMute) {
-    logger.debug(newState.member.user.username, "Removing from voice XP farmers");
+    logger.trace(newState.member.user.username, "Removing from voice XP farmers");
     const removed = voice_xp_farmers.indexOf(newState.member.user.id);
     if (removed > -1) voice_xp_farmers.splice(removed, 1);
   } else if (oldState.channelId === null || !newState.member.voice.selfMute) {
     if (!voice_xp_farmers.includes(newState.member.user.id)) {
-      logger.debug(newState.member.user.username, "Adding to voice XP farmers");
+      logger.trace(newState.member.user.username, "Adding to voice XP farmers");
       voice_xp_farmers.push(newState.member.user.id)
     };
   }
-  logger.debug(voice_xp_farmers);
+  logger.trace(voice_xp_farmers);
 };
 
 const voiceXPFarmingCallback = () => {
   const df = data_manager.readDatafile("level_system");
   if (!df) return;
   for (const uid of voice_xp_farmers) {
-    logger.debug("Giving voice farmer reward to", uid);
+    logger.trace("Giving voice farmer reward to", uid);
 
     const reward = Math.round(config.modules.level_system.voiceXP.reward * voice_xp_farmers.length * config.modules.level_system.voiceXP.groupFarmingMultiplier);
-    logger.debug("Reward:", reward);
+    logger.trace("Reward:", reward);
 
     if (!df[uid]) {
       df[uid] = {};

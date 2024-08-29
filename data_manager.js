@@ -12,10 +12,10 @@ const logger = require("./logging");
  */
 function createDatafile(dfName, createData) {
   const dfPath = path.join("data", dfName + ".json");
-  logger.debug("createDatafile dfPath:", path.resolve(dfPath));
+  logger.trace("createDatafile dfPath:", path.resolve(dfPath));
   try {
     const buf = fs.readFileSync(dfPath, { encoding: "utf8" });
-    logger.debug("Successfully loaded the datafile.");
+    logger.trace("Successfully loaded the datafile.");
     return JSON.parse(buf);
   } catch (err) {
     if (err.code === "ENOENT") {
@@ -23,7 +23,7 @@ function createDatafile(dfName, createData) {
         const dfData = createData;
         fs.mkdirSync(path.join("data"), { recursive: true });
         fs.writeFileSync(dfPath, JSON.stringify(dfData), { encoding: "utf8" });
-        logger.debug("Successfully created the datafile.");
+        logger.trace("Successfully created the datafile.");
         return dfData;
       } catch (err) {
         return null;
@@ -41,10 +41,10 @@ function createDatafile(dfName, createData) {
  */
 function readDatafile(dfName) {
   const dfPath = path.join("data", dfName + ".json");
-  logger.debug("readDatafile dfPath:", path.resolve(dfPath));
+  logger.trace("readDatafile dfPath:", path.resolve(dfPath));
   try {
     const buf = fs.readFileSync(dfPath, { encoding: "utf8" });
-    logger.debug("Successfully read the datafile.");
+    logger.trace("Successfully read the datafile.");
     return JSON.parse(buf);
   } catch (err) {
     return null;
@@ -59,10 +59,10 @@ function readDatafile(dfName) {
  */
 function writeDatafile(dfName, df) {
   const dfPath = path.join("data", dfName + ".json");
-  logger.debug("writeDatafile dfPath:", path.resolve(dfPath));
+  logger.trace("writeDatafile dfPath:", path.resolve(dfPath));
   try {
     fs.writeFileSync(dfPath, JSON.stringify(df), { encoding: "utf8" });
-    logger.debug("Successfully wrote to the datafile.");
+    logger.trace("Successfully wrote to the datafile.");
   } catch (err) {
     return null;
   }
