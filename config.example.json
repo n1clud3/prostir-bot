@@ -43,7 +43,6 @@
     "shortvids_convert": {
       "enabled": true,
       "rapidAPIkey": "",
-      "rapidAPIhost": "",
       "converters": {
         "reels": {
           "enabled": true,
@@ -55,9 +54,17 @@
         },
         "yt_shorts": {
           "enabled": true,
-          "rapidAPIhost": ""
+          "rapidAPIhost": "youtube-media-downloader.p.rapidapi.com"
         }
       }
+    },
+    "ping_response": {
+      "enabled": true,
+      "responses": [
+        "responses are used",
+        "if your bot gets pinged",
+        "by someone"
+      ]
     }
   }
 }
