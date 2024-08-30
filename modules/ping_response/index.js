@@ -1,5 +1,7 @@
+//@ts-check
+
 const { Client, Events } = require("discord.js");
-const logger = require("../../logging");
+const Logger = require("../../logging");
 const config = require("../../config.json");
 const _ = require("lodash");
 
@@ -9,6 +11,7 @@ let responses_left = [];
  * @param {Client} client
  */
 function initModule(client) {
+  const logger = new Logger("ping_response");
   client.on(Events.MessageCreate, async (msg) => {
     if (!msg.mentions.has(client.user)) return;
 

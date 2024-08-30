@@ -2,10 +2,12 @@
 
 const path = require("node:path");
 const fs = require("node:fs");
-const { Events, Client, Collection, Message, VoiceState, EmbedBuilder, parseEmoji } = require("discord.js");
-const logger = require("../../logging");
+const { Events, Client, Collection, Message, VoiceState } = require("discord.js");
+const Logger = require("../../logging");
 const config = require("../../config.json");
 const data_manager = require("../../data_manager");
+
+const logger = new Logger("level_system");
 
 /**
  * Calculates level from the XP amount.
@@ -25,13 +27,13 @@ function calculateLevel(xp, settings) {
   // While the XP is greater than or equal to the XP required for the next level,
   // increment the level and subtract the required XP from the total XP
   while (xp >= xpPerLevel) {
-      level++;
-      xp -= xpPerLevel;
+    level++;
+    xp -= xpPerLevel;
 
-      // Increase the XP required per level every 10 levels
-      if (level % xpIncreaseInterval === 0) {
-          xpPerLevel += xpIncreaseAmount;
-      }
+    // Increase the XP required per level every 10 levels
+    if (level % xpIncreaseInterval === 0) {
+      xpPerLevel += xpIncreaseAmount;
+    }
   }
 
   // Return the calculated level
@@ -47,23 +49,23 @@ function calculateLevel(xp, settings) {
 function calculateXP(level, settings) {
   let requiredXP = 0;
 
-    // XP required for each level starting from level 1
-    let xpPerLevel = settings.baseLevelXP; // Starting XP per level
-    const xpIncreaseInterval = 10; // Increase interval for XP per level
-    const xpIncreaseAmount = settings.xpIncreaseAmount; // Amount of XP increase per level increase interval
+  // XP required for each level starting from level 1
+  let xpPerLevel = settings.baseLevelXP; // Starting XP per level
+  const xpIncreaseInterval = 10; // Increase interval for XP per level
+  const xpIncreaseAmount = settings.xpIncreaseAmount; // Amount of XP increase per level increase interval
 
-    // Loop through each level up to the desired level
-    for (let i = 1; i <= level; i++) {
-        requiredXP += xpPerLevel;
+  // Loop through each level up to the desired level
+  for (let i = 1; i <= level; i++) {
+    requiredXP += xpPerLevel;
 
-        // Increase the XP required per level every 10 levels
-        if (i % xpIncreaseInterval === 0) {
-            xpPerLevel += xpIncreaseAmount;
-        }
+    // Increase the XP required per level every 10 levels
+    if (i % xpIncreaseInterval === 0) {
+      xpPerLevel += xpIncreaseAmount;
     }
+  }
 
-    // Return the required XP
-    return requiredXP;
+  // Return the required XP
+  return requiredXP;
 }
 
 /**
@@ -91,7 +93,6 @@ function checkForReward(level, msg) {
         }
         msg.member.roles.add(reward.role_id).catch((reason) => {
           logger.error("Could not add role to a user. Reason:", reason);
-          return;
         });
         logger.log(`${msg.author.username} got a ${reward.type} reward!`);
         return true;
@@ -102,7 +103,7 @@ function checkForReward(level, msg) {
   return false;
 }
 
-function loadCommands(/**@type {Client}*/ client) {
+function loadCommands() {
   const commands = new Collection();
 
   const commandsPath = path.join(__dirname, "commands");
@@ -206,8 +207,8 @@ const voiceStateUpdate = async (oldState, newState) => {
   } else if (oldState.channelId === null || !newState.member.voice.selfMute) {
     if (!voice_xp_farmers.includes(newState.member.user.id)) {
       logger.trace(newState.member.user.username, "Adding to voice XP farmers");
-      voice_xp_farmers.push(newState.member.user.id)
-    };
+      voice_xp_farmers.push(newState.member.user.id);
+    }
   }
   logger.trace(voice_xp_farmers);
 };
@@ -218,7 +219,11 @@ const voiceXPFarmingCallback = () => {
   for (const uid of voice_xp_farmers) {
     logger.trace("Giving voice farmer reward to", uid);
 
-    const reward = Math.round(config.modules.level_system.voiceXP.reward * voice_xp_farmers.length * config.modules.level_system.voiceXP.groupFarmingMultiplier);
+    const reward = Math.round(
+      config.modules.level_system.voiceXP.reward *
+        voice_xp_farmers.length *
+        config.modules.level_system.voiceXP.groupFarmingMultiplier,
+    );
     logger.trace("Reward:", reward);
 
     if (!df[uid]) {

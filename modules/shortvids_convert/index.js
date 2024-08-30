@@ -6,8 +6,10 @@ const { Client, Message, EmbedBuilder, Events } = require("discord.js");
 const axios = require("axios");
 const fs = require("node:fs");
 const path = require("node:path");
-const logger = require("../../logging.js");
+const Logger = require("../../logging.js");
 const config = require("../../config.json");
+
+const logger = new Logger("shortvids_convert");
 
 /**
  * @param {string} url
@@ -16,7 +18,7 @@ const config = require("../../config.json");
  * @returns {Promise<string, Error>}
  */
 async function downloadLink(url, img, index) {
-  const filename = img ? `shortvid_slide_${index}.jpeg` : "shortvid_cache.mp4";
+  const filename = img ? `shortvid_slide_${index}.jpeg` : "shortvid.mp4";
 
   const pathbuf = path.join("data");
   const filepath = path.join(pathbuf, filename);
@@ -27,7 +29,7 @@ async function downloadLink(url, img, index) {
   try {
     // @ts-ignore
     const res = await axios.get(url, {
-      responseType: "stream"
+      responseType: "stream",
     });
     res.data.pipe(f);
 
@@ -78,18 +80,18 @@ async function instaScraper(url) {
  */
 async function tiktokScraper(url) {
   const options = {
-    method: 'GET',
-    url: 'https://tiktok-scraper7.p.rapidapi.com/',
+    method: "GET",
+    url: "https://tiktok-scraper7.p.rapidapi.com/",
     params: {
       url: url,
-      hd: '1'
+      hd: "1",
     },
     headers: {
-      'X-RapidAPI-Key': config.modules.shortvids_convert.rapidAPIkey,
-      'X-RapidAPI-Host': config.modules.shortvids_convert.converters.tiktok.rapidAPIhost
-    }
+      "X-RapidAPI-Key": config.modules.shortvids_convert.rapidAPIkey,
+      "X-RapidAPI-Host": config.modules.shortvids_convert.converters.tiktok.rapidAPIhost,
+    },
   };
-  
+
   try {
     const response = await axios.request(options);
     return response.data;
@@ -104,15 +106,15 @@ async function tiktokScraper(url) {
  */
 async function shortsScraper(url) {
   const options = {
-    method: 'GET',
-    url: 'https://youtube-media-downloader.p.rapidapi.com/v2/video/details',
+    method: "GET",
+    url: "https://youtube-media-downloader.p.rapidapi.com/v2/video/details",
     params: {
-      videoId: url.split("/")[url.split("/").length - 1]
+      videoId: url.split("/")[url.split("/").length - 1],
     },
     headers: {
-      'X-RapidAPI-Key': config.modules.shortvids_convert.rapidAPIkey,
-      'X-RapidAPI-Host': config.modules.shortvids_convert.converters.yt_shorts.rapidAPIhost
-    }
+      "X-RapidAPI-Key": config.modules.shortvids_convert.rapidAPIkey,
+      "X-RapidAPI-Host": config.modules.shortvids_convert.converters.yt_shorts.rapidAPIhost,
+    },
   };
 
   try {
@@ -126,7 +128,7 @@ async function shortsScraper(url) {
 const messageCreateReels = async (/** @type {Message<boolean>} */ msg) => {
   if (!msg.content.startsWith("https://www.instagram.com/")) return;
   try {
-    msg.suppressEmbeds(true);
+    await msg.suppressEmbeds(true);
   } catch (err) {
     logger.error("Error trying to suppress embeds.", err);
   }
@@ -141,12 +143,12 @@ const messageCreateReels = async (/** @type {Message<boolean>} */ msg) => {
 
   if (post.length > 0) {
     post.forEach((media) => {
-      if (media.type === "video") { dl_link = media.link; return }
-      else {
+      if (media.type === "video") {
+        dl_link = media.link;
+      } else {
         response.edit({
           embeds: [new EmbedBuilder().setColor("Red").setDescription("Виникла помилка при обробці посилання.")],
         });
-        return;
       }
     });
   }
@@ -156,24 +158,30 @@ const messageCreateReels = async (/** @type {Message<boolean>} */ msg) => {
     logger.trace("Higher than 25mb?", fs.statSync(f).size > 25 * (1024 * 1024));
     if (fs.statSync(f).size > 25 * (1024 * 1024)) {
       logger.error("Error trying to send a Reels video. File is larger than 25 MB.");
-      response.edit({ embeds: [new EmbedBuilder().setColor("Red").setDescription("Відео важить більше 25MB, неможливо завантажити в чат.")] });
+      response.edit({
+        embeds: [
+          new EmbedBuilder().setColor("Red").setDescription("Відео важить більше 25MB, неможливо завантажити в чат."),
+        ],
+      });
       return;
     }
     response.edit({ embeds: [], content: "Посилання конвертовано!", files: [f] });
   } catch (err) {
     logger.error("Error trying to send a Reels video.", err);
     try {
-      response.edit({ embeds: [new EmbedBuilder().setColor("Red").setDescription("Виникла помилка при обробці посилання.")] });
+      response.edit({
+        embeds: [new EmbedBuilder().setColor("Red").setDescription("Виникла помилка при обробці посилання.")],
+      });
     } catch (err) {
-      logger.error("Error trying to print out error embed (BRUH).", err);
+      logger.error("Error trying to respond with error embed.", err);
     }
   }
 };
 
 const messageCreateTiktok = async (/** @type {Message<boolean>} */ msg) => {
-  if (!(msg.content.startsWith("https://www.tiktok.com/") || msg.content.startsWith("https://vm.tiktok.com/") )) return;
+  if (!(msg.content.startsWith("https://www.tiktok.com/") || msg.content.startsWith("https://vm.tiktok.com/"))) return;
   try {
-    msg.suppressEmbeds(true);
+    await msg.suppressEmbeds(true);
   } catch (err) {
     logger.error("Error trying to suppress embeds.", err);
   }
@@ -183,26 +191,34 @@ const messageCreateTiktok = async (/** @type {Message<boolean>} */ msg) => {
   });
 
   const post = await tiktokScraper(link);
-  logger.log(post)
-  
+  logger.log(post);
+
   try {
     const files = [];
-    logger.trace(post.data.images)
+    logger.trace(post.data.images);
     if (!post.data.images) {
       const dl_link = post.data.play;
       const f = await downloadLink(dl_link, false, 0);
       logger.trace("Higher than 25mb?", fs.statSync(f).size > 25 * (1024 * 1024));
       if (fs.statSync(f).size > 25 * (1024 * 1024)) {
         logger.error("Error trying to send a TikTok video. File is larger than 25 MB.");
-        response.edit({ embeds: [new EmbedBuilder().setColor("Red").setDescription("Відео важить більше 25MB, неможливо завантажити в чат.")] });
+        response.edit({
+          embeds: [
+            new EmbedBuilder().setColor("Red").setDescription("Відео важить більше 25MB, неможливо завантажити в чат."),
+          ],
+        });
         return;
       }
 
-      files.push(f)
+      files.push(f);
     } else {
       if (post.data.images.length > 10) {
         logger.error("Error trying to send a TikTok slideshow. More than 10 slides.");
-        response.edit({ embeds: [new EmbedBuilder().setColor("Red").setDescription("Більше ніж 10 слайдів, неможливо завантажити в чат.")] });
+        response.edit({
+          embeds: [
+            new EmbedBuilder().setColor("Red").setDescription("Більше ніж 10 слайдів, неможливо завантажити в чат."),
+          ],
+        });
         return;
       }
 
@@ -211,29 +227,36 @@ const messageCreateTiktok = async (/** @type {Message<boolean>} */ msg) => {
         const f = await downloadLink(dl_link, true, i);
         if (fs.statSync(f).size > 25 * (1024 * 1024)) {
           logger.error("Error trying to send a TikTok slideshow. File is larger than 25 MB.");
-          response.edit({ embeds: [new EmbedBuilder().setColor("Red").setDescription("Фото важить більше 25MB, неможливо завантажити в чат.")] });
+          response.edit({
+            embeds: [
+              new EmbedBuilder()
+                .setColor("Red")
+                .setDescription("Фото важить більше 25MB, неможливо завантажити в чат."),
+            ],
+          });
           return;
         }
-        files.push(f)
+        files.push(f);
       }
     }
 
     response.edit({ embeds: [], content: "Посилання конвертовано!", files: files });
-
   } catch (err) {
     logger.error("Error trying to send a TikTok video.", err);
     try {
-      response.edit({ embeds: [new EmbedBuilder().setColor("Red").setDescription("Виникла помилка при обробці посилання.")] });
+      response.edit({
+        embeds: [new EmbedBuilder().setColor("Red").setDescription("Виникла помилка при обробці посилання.")],
+      });
     } catch (err) {
-      logger.error("Error trying to print out error embed (BRUH).", err);
+      logger.error("Error trying to respond with error embed.", err);
     }
   }
-}
+};
 
 const messageCreateShorts = async (/** @type {Message<boolean>} */ msg) => {
   if (!msg.content.startsWith("https://www.youtube.com/shorts/")) return;
   try {
-    msg.suppressEmbeds(true);
+    await msg.suppressEmbeds(true);
   } catch (err) {
     logger.error("Error trying to suppress embeds.", err);
   }
@@ -243,31 +266,46 @@ const messageCreateShorts = async (/** @type {Message<boolean>} */ msg) => {
   });
 
   const post = await shortsScraper(link);
-  
+
   try {
     const dl_link = post.videos.items[0].url;
     const f = await downloadLink(dl_link, false, 0);
     logger.trace("Higher than 25mb?", fs.statSync(f).size > 25 * (1024 * 1024));
     if (fs.statSync(f).size > 25 * (1024 * 1024)) {
       logger.error("Error trying to send a YT Shorts video. File is larger than 25 MB.");
-      response.edit({ embeds: [new EmbedBuilder().setColor("Red").setDescription("Відео важить більше 25MB, неможливо завантажити в чат.")] });
+      response.edit({
+        embeds: [
+          new EmbedBuilder().setColor("Red").setDescription("Відео важить більше 25MB, неможливо завантажити в чат."),
+        ],
+      });
       return;
     }
     response.edit({ embeds: [], content: "Посилання конвертовано!", files: [f] });
   } catch (err) {
     logger.error("Error trying to send a YT Shorts video.", err);
     try {
-      response.edit({ embeds: [new EmbedBuilder().setColor("Red").setDescription("Виникла помилка при обробці посилання.")] });
+      response.edit({
+        embeds: [new EmbedBuilder().setColor("Red").setDescription("Виникла помилка при обробці посилання.")],
+      });
     } catch (err) {
-      logger.error("Error trying to print out error embed (BRUH).", err);
+      logger.error("Error trying to respond with error embed.", err);
     }
   }
-}
+};
 
 function initModule(/**@type {Client}*/ client) {
-  if (config.modules.shortvids_convert.converters.reels.enabled) client.on(Events.MessageCreate, messageCreateReels);
-  if (config.modules.shortvids_convert.converters.tiktok.enabled) client.on(Events.MessageCreate, messageCreateTiktok);
-  if (config.modules.shortvids_convert.converters.yt_shorts.enabled) client.on(Events.MessageCreate, messageCreateShorts);
+  const converters = {
+    reels: messageCreateReels,
+    tiktok: messageCreateTiktok,
+    yt_shorts: messageCreateShorts,
+  };
+
+  Object.keys(converters).forEach((converter) => {
+    if (config.modules.shortvids_convert.converters[converter].enabled) {
+      logger.log("Enabling", converter, "converter...");
+      client.on(Events.MessageCreate, converters[converter]);
+    }
+  });
 
   logger.log("Shortvids converters are set up!");
 }

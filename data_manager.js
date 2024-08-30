@@ -2,7 +2,7 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
-const logger = require("./logging");
+const Logger = require("./logging");
 
 /**
  * Reads or creates a data file.
@@ -11,6 +11,8 @@ const logger = require("./logging");
  * @returns
  */
 function createDatafile(dfName, createData) {
+  const logger = new Logger("data_manager_create");
+
   const dfPath = path.join("data", dfName + ".json");
   logger.trace("createDatafile dfPath:", path.resolve(dfPath));
   try {
@@ -40,6 +42,8 @@ function createDatafile(dfName, createData) {
  * @returns data parsed with JSON.parse() or null
  */
 function readDatafile(dfName) {
+  const logger = new Logger("data_manager_read");
+
   const dfPath = path.join("data", dfName + ".json");
   logger.trace("readDatafile dfPath:", path.resolve(dfPath));
   try {
@@ -58,6 +62,8 @@ function readDatafile(dfName) {
  * @returns void or null
  */
 function writeDatafile(dfName, df) {
+  const logger = new Logger("data_manager_write");
+
   const dfPath = path.join("data", dfName + ".json");
   logger.trace("writeDatafile dfPath:", path.resolve(dfPath));
   try {

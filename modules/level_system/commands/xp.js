@@ -2,7 +2,7 @@
 
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const data_manager = require("../../../data_manager");
-const logger = require("../../../logging");
+const Logger = require("../../../logging");
 const config = require("../../../config.json");
 const { calculateLevel, calculateXP } = require("../.");
 
@@ -10,14 +10,10 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("xp")
     .setDescription("Дізнайтеся вашу кількість очок досвіду.")
-    .addUserOption((option) => 
-      option
-        .setName("target")
-        .setDescription("Ціль для перегляду досвіду")
-        .setRequired(false)
-    )
+    .addUserOption((option) => option.setName("target").setDescription("Ціль для перегляду досвіду").setRequired(false))
     .setDMPermission(false),
   async execute(/** @type {import("discord.js").Interaction<import("discord.js").CacheType>}*/ interaction) {
+    const logger = new Logger("lvlsys_cmd_xp");
     if (!config.modules.level_system.enabled) {
       logger.log(`${interaction.user.username} tried to run /xp command in a disabled module "level_system".`);
       //@ts-ignore
@@ -59,27 +55,28 @@ module.exports = {
     }
 
     //@ts-ignore
-    await interaction.reply({ embeds: [
-      new EmbedBuilder()
-        .setColor(0xd4c47c)
-        .setTitle(`Досвід учасника ${target.username}`)
-        .addFields(
-          {
-            name: "Кількість XP :star:",
-            value: `\`\`\`${xp} XP\`\`\``,
-            inline: true,
-          },
-          {
-            name: "Рівень :chart_with_upwards_trend:",
-            value: `\`\`\`LVL ${lvl}\`\`\``,
-            inline: true,
-          },
-          {
-            name: "До наступного рівня :star2:",
-            value: `\`\`\`${calculateXP(lvl + 1, config.modules.level_system) - xp} XP\`\`\``,
-            inline: true,
-          },
-        ),
+    await interaction.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setColor(0xd4c47c)
+          .setTitle(`Досвід учасника ${target.username}`)
+          .addFields(
+            {
+              name: "Кількість XP :star:",
+              value: `\`\`\`${xp} XP\`\`\``,
+              inline: true,
+            },
+            {
+              name: "Рівень :chart_with_upwards_trend:",
+              value: `\`\`\`LVL ${lvl}\`\`\``,
+              inline: true,
+            },
+            {
+              name: "До наступного рівня :star2:",
+              value: `\`\`\`${calculateXP(lvl + 1, config.modules.level_system) - xp} XP\`\`\``,
+              inline: true,
+            },
+          ),
       ],
     });
   },

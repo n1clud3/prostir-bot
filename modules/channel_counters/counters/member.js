@@ -1,13 +1,15 @@
 //@ts-check
 
-const { Guild, Collection, GuildMember } = require("discord.js");
-const logger = require("../../../logging");
+const { Guild } = require("discord.js");
+const Logger = require("../../../logging");
 
 /**
  * @param {Guild} guild
  * @param {{enabled: boolean, channelId: string}} settings
  */
 module.exports = async function updateMemberCounter(guild, settings) {
+  const logger = new Logger("counter_member");
+
   const channel = guild.channels.cache.get(settings.channelId);
   if (!channel) return;
 

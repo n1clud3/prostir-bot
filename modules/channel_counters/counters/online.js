@@ -1,7 +1,7 @@
 //@ts-check
 
 const { Guild, Collection, GuildMember } = require("discord.js");
-const logger = require("../../../logging");
+const Logger = require("../../../logging");
 
 /**
  * @param {Guild} guild
@@ -9,6 +9,8 @@ const logger = require("../../../logging");
  * @param {{enabled: boolean, channelId: string}} settings
  */
 module.exports = async function updateOnlineCounter(guild, members, settings) {
+  const logger = new Logger("counter_online");
+
   const channel = guild.channels.cache.get(settings.channelId);
   if (!channel) return;
 

@@ -1,8 +1,10 @@
 //@ts-check
 
 const { Client } = require("discord.js");
-const logger = require("../../logging");
+const Logger = require("../../logging");
 const config = require("../../config.json");
+
+const logger = new Logger("channel_counters");
 
 async function initModule(/** @type {Client} */ client) {
   await client.guilds.fetch();

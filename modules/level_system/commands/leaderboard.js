@@ -1,11 +1,12 @@
 //@ts-check
 
-const sqlite3 = require("sqlite3").verbose();
 const data_manager = require("../../../data_manager");
 const config = require("../../../config.json");
-const logger = require("../../../logging");
+const Logger = require("../../../logging");
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const { calculateLevel } = require("..");
+
+const logger = new Logger("lvlsys_cmd_leaderboard");
 
 function sortObjectByValue(obj) {
   const sortedEntries = Object.entries(obj).sort((a, b) => b[1] - a[1]); // Sorting entries based on numeric values
@@ -69,7 +70,7 @@ module.exports = {
     for (const uid in sortObjectByValue(leaderboard)) {
       if (i > 20) break;
       const username = (await interaction.client.users.fetch(uid)).username;
-      const prefix = (i <= 3) ? "#".repeat(i) : "";
+      const prefix = i <= 3 ? "#".repeat(i) : "";
       message = message.concat(
         `\n${prefix} ${i}. ${username} - :star: ${leaderboard[uid].toString()} XP - :chart_with_upwards_trend: LVL ${calculateLevel(leaderboard[uid], config.modules.level_system).toString()}`,
       );

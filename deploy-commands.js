@@ -4,7 +4,8 @@ const { REST, Routes } = require("discord.js");
 const config = require("./config.json");
 const fs = require("node:fs");
 const path = require("node:path");
-const logger = require("./logging");
+const Logger = require("./logging");
+const logger = new Logger("deploy-commands");
 
 const commands = [];
 // Grab all the command folders from the commands directory you created earlier
@@ -30,7 +31,6 @@ for (const folder of modulesFolders) {
   } catch (error) {
     if (error.code === "ENOENT") {
       logger.warn("Skipped", error.path);
-      continue;
     } else {
       logger.error(error);
     }
