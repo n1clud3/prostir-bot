@@ -1,6 +1,7 @@
 const { Client, Events, GatewayIntentBits, EmbedBuilder } = require("discord.js");
 const config = require("./config.json");
 const Logger = require("./logging");
+const fs = require("node:fs");
 
 const client = new Client({
   intents: [
@@ -12,6 +13,10 @@ const client = new Client({
     GatewayIntentBits.GuildPresences,
   ],
 });
+
+// load token
+// const preinit_logger = new Logger("preinit_logger");
+const TOKEN = fs.readFileSync("/run/secrets/bot_token", {encoding: "utf8"});
 
 client.once(Events.ClientReady, async (e) => {
   const logger = new Logger("main");
@@ -41,7 +46,7 @@ client.once(Events.ClientReady, async (e) => {
 
     const embed = new EmbedBuilder()
       .setColor(0xd4c47c)
-      .setTitle("**_Prostir Bot_** запущено!")
+      .setTitle("Prostir Bot запущено!")
       .setDescription("Увімкнені модулі:");
 
     Object.keys(config.modules).forEach((mod) => {
@@ -54,4 +59,4 @@ client.once(Events.ClientReady, async (e) => {
   });
 });
 
-client.login(config.token);
+client.login(TOKEN);

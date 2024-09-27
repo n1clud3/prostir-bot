@@ -1,5 +1,4 @@
 {
-  "token": "bot token here",
   "clientId": "your application id",
   "guildId": "your guild id",
   "logs_channel": "your logs channel id, can be left empty",

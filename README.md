@@ -13,9 +13,11 @@ A modular discord bot for the Prostir Discord community.
 
 ## Deployment
 
-To deploy the bot, first make sure you have Node.js 20.
+To deploy the bot, first make sure you have Docker and Node 20.
 After that you need to copy an [example config](./config.example.json),
 rename it to `config.json` and fill it up appropriately.
+Additionally, create a `token.txt` file, where your bot token
+will be stored.
 After that, run
 
 ```bash
@@ -27,7 +29,7 @@ This will register commands for the given `guildId` in config.
 Start the bot by running
 
 ```bash
-node .
+docker compose up --build
 ```
 
 ## Used By
