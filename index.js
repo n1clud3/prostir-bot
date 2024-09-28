@@ -16,7 +16,7 @@ const client = new Client({
 
 // load token
 // const preinit_logger = new Logger("preinit_logger");
-const TOKEN = fs.readFileSync("/run/secrets/bot_token", {encoding: "utf8"});
+const TOKEN = fs.readFileSync("/run/secrets/bot_token", { encoding: "utf8" });
 
 client.once(Events.ClientReady, async (e) => {
   const logger = new Logger("main");
@@ -38,25 +38,27 @@ client.once(Events.ClientReady, async (e) => {
     }
   }
 
-  e.channels.fetch(config.logs_channel).then((c) => {
-    if (!c) {
-      logger.error("Failed to access logs channel");
-      return;
-    }
+  if (config.print_greeting) {
+    e.channels.fetch(config.logs_channel).then((c) => {
+      if (!c) {
+        logger.error("Failed to access logs channel");
+        return;
+      }
 
-    const embed = new EmbedBuilder()
-      .setColor(0xd4c47c)
-      .setTitle("Prostir Bot запущено!")
-      .setDescription("Увімкнені модулі:");
+      const embed = new EmbedBuilder()
+        .setColor(0xd4c47c)
+        .setTitle("Prostir Bot запущено!")
+        .setDescription("Увімкнені модулі:");
 
-    Object.keys(config.modules).forEach((mod) => {
-      embed.addFields({ name: mod, value: enabled_modules[mod] ? ":white_check_mark:" : ":x:" });
+      Object.keys(config.modules).forEach((mod) => {
+        embed.addFields({ name: mod, value: enabled_modules[mod] ? ":white_check_mark:" : ":x:" });
+      });
+
+      c.send({ embeds: [embed] }).catch((reason) => {
+        logger.error(`Failed to send greeting message to logs channel: ${reason}`);
+      });
     });
-
-    c.send({ embeds: [embed] }).catch((reason) => {
-      logger.error(`Failed to send greeting message to logs channel: ${reason}`);
-    });
-  });
+  }
 });
 
 client.login(TOKEN);

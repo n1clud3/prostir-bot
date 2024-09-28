@@ -2,6 +2,7 @@
   "clientId": "your application id",
   "guildId": "your guild id",
   "logs_channel": "your logs channel id, can be left empty",
+  "print_greeting": true,
   "modules": {
     "voice_managing": {
       "enabled": true,
