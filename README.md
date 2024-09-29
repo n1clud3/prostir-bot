@@ -10,6 +10,7 @@ A modular discord bot for the Prostir Discord community.
 - Ping response: set messages to be randomly given to people who mention a bot
 - Short videos downloading (TikTok, Instagram Reels, YouTube Shorts)
 - Automated voice channel creation
+- Garry's Mod chat relay ([Garry's Mod addon](https://github.com/n1clud3/prsbot_gmod_relay))
 
 ## Deployment
 

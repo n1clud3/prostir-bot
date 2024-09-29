@@ -66,6 +66,12 @@
         "if your bot gets pinged",
         "by someone"
       ]
+    },
+    "gmod_relay": {
+      "enabled": true,
+      "message_sendmode": "websocket",
+      "relay_chat": "chat to read messages from",
+      "messaging_webhook": "webhook to send messages from gmod with"
     }
   }
 }

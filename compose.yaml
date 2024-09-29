@@ -16,12 +16,12 @@ services:
     secrets:
       - bot_token
     ports:
-      - 80:8069
+      - "44369:443"
     volumes:
-      - data:/usr/src/app/data
+      - data:/home/container/data
       - type: bind
         source: ./config.json
-        target: /usr/src/app/config.json
+        target: /home/container/config.json
 
 volumes:
   data:
