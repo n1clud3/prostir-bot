@@ -21,18 +21,13 @@ function createDatafile(dfName, createData) {
     return JSON.parse(buf);
   } catch (err) {
     if (err.code === "ENOENT") {
-      try {
-        const dfData = createData;
-        fs.mkdirSync(path.join("data"), { recursive: true });
-        fs.writeFileSync(dfPath, JSON.stringify(dfData), { encoding: "utf8" });
-        logger.trace("Successfully created the datafile.");
-        return dfData;
-      } catch (err) {
-        return null;
-      }
-    } else {
-      return null;
+      const dfData = createData;
+      fs.mkdirSync(path.join("data"), { recursive: true });
+      fs.writeFileSync(dfPath, JSON.stringify(dfData), { encoding: "utf8" });
+      logger.trace("Successfully created the datafile.");
+      return dfData;
     }
+    throw err;
   }
 }
 

@@ -16,7 +16,7 @@ module.exports = class Logger {
 
   /**
    * Debug message to send to console.
-   * Will be shown only if process.env.DEBUG exists.
+   * Will be shown only if process.env.TRACE exists.
    * @param {...any} msg
    */
   trace(...msg) {

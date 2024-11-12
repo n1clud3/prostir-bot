@@ -14,9 +14,8 @@ const client = new Client({
   ],
 });
 
-// load token
-// const preinit_logger = new Logger("preinit_logger");
-const TOKEN = fs.readFileSync("/run/secrets/bot_token", { encoding: "utf8" });
+// Load token
+const TOKEN = fs.readFileSync("./token.txt", { encoding: "utf8" });
 
 client.once(Events.ClientReady, async (e) => {
   const logger = new Logger("main");
