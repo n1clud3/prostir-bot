@@ -9,6 +9,7 @@ const logger = new Logger("gmod_relay");
 
 const WSMethods = {
   PlayerSpawn: "prsbotPlayerSpawn",
+  PlayerConnect: "prsbotPlayerConnect",
   PlayerLeave: "prsbotPlayerLeave",
   AvatarFetch: "prsbotAvatarFetch",
   MessageSend: "prsbotMessageSend",
@@ -60,6 +61,23 @@ function initModule(/**@type {Client}*/ client) {
             username: received_data.plyname,
             avatar_url: data.profile.avatarFull
           })
+        } catch (err) {
+          logger.error(err);
+        }
+      } else if (strdata.startsWith(WSMethods.PlayerConnect)) {
+        logger.trace("Received request of type", WSMethods.PlayerConnect)
+        const received_data = JSON.parse(data.toString().substring(WSMethods.PlayerConnect.length));
+
+        try {
+          axios.post(config.modules.gmod_relay.messaging_webhook, {
+            username: config.modules.gmod_relay.relay_webhook_name,
+            avatar_url: config.modules.gmod_relay.relay_webhook_avatar,
+            embeds: [
+              new EmbedBuilder()
+                .setTitle(`Гравець **${received_data.plyname}** приєднується до гри ...`)
+                .setColor("yellow")
+            ]
+          });
         } catch (err) {
           logger.error(err);
         }
